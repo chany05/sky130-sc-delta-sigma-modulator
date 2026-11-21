@@ -16,8 +16,8 @@ MEMS 가속도 센서 인터페이스용 2차 1-bit fully differential switched-
 ## Highlights
 
 - 스펙(GBW, DC gain, slew rate, $C_s$, switch $R_{on}$)을 센서 잡음과 16 bit 목표에서 단계별로 도출함 (Specifications 참조).
-- SNDR: 이상 behavioral model은 115.5 dB임. 잡음 없는 트랜지스터 레벨 시뮬레이션은 chopper가 극성이 바뀔 때마다 더하는 오차 때문에 약 70 dB에 그침. kT/C와 flicker noise를 포함하고 chopper가 ideal이라고 가정한 noise budget은 $\approx$ 96 dB (15.7 bit)로 추정되며, 요구(95.2 dB)보다 높고 설계 목표(98.1 dB)보다 낮음.
-- 잡음을 주입한 run은 68–70 dB로, 잡음이 없을 때와 같은 floor임. chopper는 약 70 dB의 flicker 한계를 없애지만 (추정 개선 28.6 dB) 자체 오차를 더해, 현재 구성에서는 SNDR이 약 70 dB로 제한됨. 이 오차는 줄일 수 있으므로 (반전이 없으면 0이고, 반전 횟수가 줄면 감소함) noise budget의 96 dB가 여전히 목표임 (Limitations 참조). 이제 한계는 시뮬레이션 시간이 아니라 회로임.
+- SNDR: 이상 behavioral model은 115.5 dB임. 첫 설계의 잡음 없는 트랜지스터 레벨 시뮬레이션은 chopper가 극성이 바뀔 때마다 더하는 오차 때문에 약 70 dB에 그쳤음. 원인 두 가지(chopper clock overlap, 출력 chopper의 위치)는 이후 찾아 수정했으며, 수정한 회로의 SNDR은 아직 다시 측정하지 않았음. kT/C와 flicker noise를 포함하고 chopper가 ideal이라고 가정한 noise budget은 $\approx$ 96 dB (15.7 bit)로 추정되며, 요구(95.2 dB)보다 높고 설계 목표(98.1 dB)보다 낮음.
+- 첫 설계에서 잡음을 주입한 run은 68–70 dB로, 잡음이 없을 때와 같은 floor임. Chopper는 약 70 dB의 flicker 한계를 없애지만 (추정 개선 28.6 dB) 그 설계에서는 극성을 바꿀 때마다 자체 오차를 더했음. 오차의 원인은 chopper clock overlap과 출력 chopper가 OTA 출력 node를 flip하는 것이었음 (Integrator 참조). 둘 다 1st integrator에서 수정했고 (교대 35–56 µV → 0.05 µV), 수정한 회로의 SNDR은 아직 측정하지 않았음 (Limitations 참조).
 - Integrator 테스트: 2nd integrator는 이상 계수와 0.7 % 이내로 일치함 (DAC step 0.4355 V vs. 0.436 V, input step −12.04 mV vs. −12.1 mV). 1st integrator는 DAC step +0.65 %, input step −2 %에서 −5 %이며, chopper 때문에 홀짝 교대가 나타남.
 - Switch: bootstrap switch의 $R_{on}$은 monotonic함 (최대 1.41 kΩ, 한계 2.43 kΩ 이하). TG는 0.9 kΩ에 달해 summing-node switch의 목표 0.5 kΩ보다 높으므로 width를 키워야 함.
 
@@ -209,7 +209,7 @@ A_0\ge\frac{g_1+g_2}{\mu_{max}}=\frac{0.6+0.96}{8.4\times10^{-3}}\approx186\;(45
 - 정확한 (root-sum-square) 형태는 $\sqrt{g_1^2 + g_2^2} / \mu_{max} \approx 135$ (42.6 dB)이므로, 위 근사는 약 2.7 dB 보수적임.
 
 ![SQNR vs OTA gain](docs/figures/gain_vs_sqnr.svg)
-*OTA DC gain에 따른 SQNR (보수적 모델, $\mu_1 + \mu_2$)과 스펙 gain에서 각 stage의 leakage 기여.*
+*OTA DC gain에 따른 SQNR (보수적 모델,* $\mu_1 + \mu_2$*)과 스펙 gain에서 각 stage의 leakage 기여.*
 
 #### Slew rate
 
@@ -346,10 +346,10 @@ R_{on}\le\frac{t}{N_{err}\,(C_s+C_d)}
 
 #### SC Integrator
 ![1st SC integrator](docs/figures/SC_Integrator.svg)
-*1st integrator ($`C_s = C_d`$ = 4.2 pF, $`C_i`$ = 14.0 pF)*
+*1st integrator (*$C_s = C_d$ *= 4.2 pF,* $C_i$ *= 14.0 pF)*
 
 ![2nd SC integrator](docs/figures/SC_Integrator_2.svg)
-*2nd integrator ($`C_s : C_d : C_i`$ = 4.23 : 2.54 : 6.98 pF)*
+*2nd integrator (*$C_s : C_d : C_i$ *= 4.23 : 2.54 : 6.98 pF)*
 
 - sampling($C_s$)과 DAC($C_d$) capacitor가 분리된 fully-differential, parasitic-insensitive SC integrator
 - $\phi_1$, $\phi_2$보다 먼저 꺼지는 early phase ($\phi_{1e}$, $\phi_{2e}$)를 사용한 bottom-plate sampling (Clocking 참조)
@@ -359,10 +359,10 @@ R_{on}\le\frac{t}{N_{err}\,(C_s+C_d)}
 
 #### OTA
 ![1st stage OTA](docs/figures/FullyDiffOTA.svg)
-*1st integrator의 OTA ($`C_c`$ = 1.19 pF)*
+*1st integrator의 OTA (*$C_c$ *= 1.19 pF)*
 
 ![2nd stage OTA](docs/figures/FullyDiffOTA_2.svg)
-*2nd integrator의 OTA ($`C_c`$ = 0.59 pF)*
+*2nd integrator의 OTA (*$C_c$ *= 0.59 pF)*
 
 - 2-stage OTA, PMOS (LVT) 입력 쌍, nulling resistor를 사용한 Miller compensation
 - SC CMFB (아래 CMFB 참조)
@@ -451,7 +451,7 @@ SC CMFB 회로는 위의 SC Integrator schematic에 포함되어 있음.
 
 #### Clocking
 ![Timing diagram](docs/figures/timing_diagram.svg)
-*Modulator의 clock timing ($f_s$ = 2.048 MHz, $T$ = 488.28 ns). (A)는 $\phi_1 \to \phi_2$ 천이를 확대한 것.*
+*Modulator의 clock timing (*$f_s$ *= 2.048 MHz,* $T$ *= 488.28 ns). (A)는* $\phi_1 \to \phi_2$ *천이를 확대한 것.*
 
 | Clock | High interval (within one period) | Purpose |
 |---|---|---|
@@ -521,7 +521,7 @@ Loop를 DC에서만 닫은(inductor) OTA의 closed-loop AC 시뮬레이션, 25 �
 - OTA 2 loop gain은 $\beta$ = 0.6의 testbench에서 scaling한 값이며, scaling한 곡선에서 crossover와 phase margin을 다시 읽음 (13.28 MHz, 62.5°). Testbench의 load (출력당 150 fF와 OTA 1의 feedback network)는 OTA 2의 실제 load가 아니므로 OTA 2 수치는 근사값임.
 
 ![Loop gain of OTA 1 and OTA 2](docs/figures/ota_bode.svg)
-*OTA 1($\beta_1$ = 0.6)과 OTA 2($\beta_2$ = 0.508)의 loop gain $T = A\beta$, 25 °C. 범례에 DC loop gain, crossover, phase margin을 표기함.*
+*OTA 1(*$\beta_1$ *= 0.6)과 OTA 2(*$\beta_2$ *= 0.508)의 loop gain* $T = A\beta$*, 25 °C. 범례에 DC loop gain, crossover, phase margin을 표기함.*
 
 ### 2. Switches (standalone)
 $R_{on}$은 switch가 on인 동안 10 mV sense source를 둔 느린 입력 ramp로 추출함 ($R_{on} = 10\ \mathrm{mV} / \lvert i\rvert$). 시뮬레이션한 size: TG $W_n / W_p / L$ = 4 / 14 / 0.35 µm (summing node와 chopper에 쓰는 size), bootstrap switch NMOS 1 / 0.15 µm.
@@ -569,10 +569,10 @@ $R_{on}$은 switch가 on인 동안 10 mV sense source를 둔 느린 입력 ramp�
   - chopper 없는 동일 loop (14.57 MHz, PM 65.0°)와 비교하면 crossover는 약 7 % 낮고 (chopper TG의 직렬 $R_{on}$ 때문), PM은 4° 높음.
   - crossover는 여전히 필요한 $\beta \cdot GBW$ = 10.6 MHz보다 높음.
 ![Chopper standalone simulation](docs/figures/chopper_spike_spectrum.svg)
-*(a) chopper clock edge에서의 differential 출력 spike (zero input, 5 % load mismatch): 0.58 mV peak, 수 ns 안에 settle. (b) 20 kHz 입력에 대한 differential 출력 spectrum: 신호가 1.024 MHz 근처의 $f_{ch} \pm f_{in}$으로 변조됨.*
+*(a) chopper clock edge에서의 differential 출력 spike (zero input, 5 % load mismatch): 0.58 mV peak, 수 ns 안에 settle. (b) 20 kHz 입력에 대한 differential 출력 spectrum: 신호가 1.024 MHz 근처의* $f_{ch} \pm f_{in}$*으로 변조됨.*
 
 ![Loop gain of the chopped OTA](docs/figures/ch_ota_bode.svg)
-*chopper를 두 상태로 둔 경우와 chopper가 없는 경우의 1st-stage OTA loop gain ($\beta$ = 0.6): chopper 포함 시 13.6 MHz, PM 69.4° (두 상태 동일), 없을 때 14.57 MHz, PM 65.0°.*
+*chopper를 두 상태로 둔 경우와 chopper가 없는 경우의 1st-stage OTA loop gain (*$\beta$ *= 0.6): chopper 포함 시 13.6 MHz, PM 69.4° (두 상태 동일), 없을 때 14.57 MHz, PM 65.0°.*
 
 ### 4. Integrator (standalone)
 - DAC-only 및 DC-input 테스트. 계수는 $\phi_2$ 끝에서 취한 샘플(원)로부터 MATLAB에서 추출함.
@@ -599,10 +599,14 @@ $R_{on}$은 switch가 on인 동안 10 mV sense source를 둔 느린 입력 ramp�
 
 ² 17 cycle 평균; cycle별 0.358–0.371 V.
 
+- 아래 표와 처음 몇 개 항목은 chopper를 수정하기 전의 첫 설계 결과이고, 수정 내용은 이 목록의 끝에 있음.
 - Input step이 홀수 / 짝수 cycle에서 평균을 중심으로 번갈아 어긋나며, 39 cycle 동안 교대 폭이 출력 레벨에 따라 커짐 (cycle 10 부근 ±0.3 mV, 마지막 cycle들에서 ±1.2 mV, 출력 전압의 약 0.5 %). 평균 step은 이상값에서 −4.9 % 벗어남.
-- **원인은 chopper임.** Chopper clock을 low로 고정하면(`tb_integrator_chopper_timing.spice`) 교대 폭이 0.00 mV이고 평균 step은 −5.97 mV (−0.5 %)임. Chopper가 없는 2nd integrator는 교대가 없음 (0.01 mV).
+- **원인은 chopper임.** Chopper clock을 low로 고정하면(`tb_integrator_chopper_timing.spice`) 교대 폭이 0.00 mV이고 평균 step은 −5.97 mV (−0.5 %)임. Chopper가 없는 2nd integrator는 교대가 없음 (0.01 mV). Integrator symbol에는 flicker noise source(`trnoise`, 66.4 µ)가 들어 있으며, 이전 integrator 시험에서는 켜져 있었고 chopper timing run에서는 꺼져 있음 (`fl` = 0). 교대 폭은 두 경우가 같고(이전 시험 0.6–0.8 mV, source를 끈 run에서 rms 0.81 mV) 평균 step도 −5.70 mV와 −5.71 mV로 같으므로 교대는 noise 때문이 아님.
 - 오차는 극성을 바꾸는 시점과 무관함: cycle 시작 후 30 ns, 120 ns, 200 ns 어디서 바꿔도 rms 0.81 mV로 같으므로 극성 전환 후의 settling 문제가 아님. 극성을 바꾸는 빈도에는 의존함: 2 / 4 cycle마다 한 번 바꾸면 ($f_{ch} = f_s/4$, $f_s/8$) 교대 폭이 0.34 / 0.25 mV, 평균 step 오차가 −2.5 % / −1.3 %로 줄어듦. 극성을 한 번 바꿀 때마다 저장된 출력이 값의 약 0.5 %만큼 바뀜.
-- 오차의 메커니즘은 아직 확인하지 못함 (후보: 출력 chopper에서의 전하 재분배, 두 chopper 상태 사이의 비대칭). 이 오차는 고주파 성분이 큰 1st integrator 출력에 곱해져 그 일부를 대역 안으로 옮김 (2nd-order modulator 참조).
+- **원인 1: chopper clock의 overlap.** Chopper clock `clkCh`와 `clkCh_b`를 NAND 뒤에 inverter를 직렬로 두어 만들었기 때문에 `clkCh`가 항상 inverter 지연만큼 `clkCh_b`보다 늦었음. 한쪽 edge에서는 둘이 약 143 ps 동안 동시에 high였고, 그동안 직선 경로와 교차 경로가 함께 켜져 OUTp와 OUTn을 short시키고 $C_{int}$의 전하를 재분배함. 그 결과 chopper edge마다 최대 ±2 mV의 step 오차가 생겼고 (이상값 6 mV 대비), Vo에 비례했으며 두 edge에서 크기가 달랐음 (+0.79 %, −0.30 %). Switch를 ideal로 바꾸거나 edge 위치를 바꿔도 결과는 같았음. $\phi_1$ / $\phi_2$ clock의 overlap은 $C_s$ 경로만 잠깐 이어서 gain 오차에 그치고, 이 clock은 source에서 이미 6 ns gap을 둠. 해결은 chopper clock만 non-overlapping clock(교차 결합 NOR + 지연, 측정 gap 약 280 ps)으로 바꾸는 것임. Gap이 있으면 신호 2개 구조에서는 gap 동안 두 경로의 PMOS가 같이 켜지므로 chopper를 4위상($\phi_A$ / $\phi_{A\_b}$, $\phi_B$ / $\phi_{B\_b}$)으로 바꿈. 위상 clock과 DAC clock은 NAND + INV를 유지함: TG는 정확한 반전 신호가 필요하고, DAC clock에 NOC를 쓰면 Seed = 0일 때 PMOS가 계속 toggle함.
+- **원인 2: 출력 chopper가 OTA 출력을 flip함.** Overlap을 고친 뒤에도 chopper를 켜면 $\beta$ = +1.6e-3 / cycle이었고 (step이 |Vo|에 따라 커짐, chopper를 끄면 −2.4e-4), 약 250 mV 이상에서 이득이 압축되었으며 (460 mV에서 12 %, ±VD에 대해 홀수차), ±35–56 µV의 교대가 남았음. Chopper를 끈 run은 직선이고 (ideal OTA, 트랜지스터 OTA 모두), 입력 chopper만 ideal로 하면 기여분이 75 % 줄고 출력 chopper만 ideal로 하면 거의 0이 됨. 파형으로 원인을 확인함: flip하는 순간 OUT이 +450 mV에서 −400 mV로 끌려가는데, 반대 극성을 아직 들고 있는 OTA 출력 node(Miller capacitor와 출력단 parasitic)에 연결되기 때문임. $\phi_1$ 동안 virtual ground는 떠 있어 OUT의 실효 capacitance가 작으므로 OUT이 거의 2|Vo|만큼 움직이고 virtual ground도 수백 mV 튐. 그 순간 입력 chopper TG가 switching하며, TG의 channel 전하, junction capacitance, OTA 입력 $C_{gs}$가 전압에 대해 비선형이어서 Vo에 의존하는 전하가 들어감. 작은 Vo에서는 선형 pole 오차, 큰 Vo에서는 압축으로 나타남.
+- **해결:** 출력 chopper를 OTA 내부의 1단 출력과 2단 gate 사이로 옮기고, Miller 보상은 2단만 감싸도록 바꿈. 이제 OTA 출력 node와 Miller capacitor는 flip되지 않고 1단 출력(약 Vo / A2, 수 mV)만 flip됨. Chopper는 1st integrator에만 둠: 2nd integrator의 오차는 1st integrator의 이득과 noise shaping으로 억제되기 때문임.
+- **해결 결과** (1st integrator, DC 입력): $\beta$ = −2.2e-4 / cycle (chopper를 끈 수준)로 +1.6e-3에서 내려갔고, 압축이 250 mV 이상에서 시작하던 것이 480 mV까지 직선이며 (잔차 0.16 µV), $f_s/2$ 교대는 35–56 µV에서 0.05 µV로 줄었음. 이 repository의 netlist와 그림은 아직 수정한 회로로 갱신하지 않았음.
 - DAC step이 0.65 % 큰 것은 parasitic을 포함한 capacitor 비율 때문일 수 있음 (확인 안 함).
 
 **2nd integrator, DAC-only test** (ideal step $= \tfrac{12}{33}\cdot 1.2\ \mathrm{V} = 0.436\ \mathrm{V}$)
@@ -637,7 +641,7 @@ $R_{on}$은 switch가 on인 동안 10 mV sense source를 둔 느린 입력 ramp�
 *잡음을 주입한 트랜지스터 레벨 modulator(32 ms, 65536 sample)의 출력 spectrum과 같은 입력의 ideal behavioral model 비교. (a) 약 20 kHz 이상에서는 두 shaped noise가 일치함. 대역 안에서 트랜지스터 레벨의 floor는 bin당 약 −92 dBFS로 평탄하며 ideal model보다 훨씬 높음. (b) Decimation filter를 거친 대역 내 spectrum (점선은 1.5 kHz와 2 kHz).*
 
 - 트랜지스터 레벨 run의 대역 내 floor는 주입한 잡음 때문이 아님: 잡음 없는 run에서도 같은 floor가 나타남 (3–6 kHz에서 ideal model 4.1e-14 대비 5.9e-12 FS²/Hz, `reltol` = 3e-6, 2.4 ms record; ±1 bit stream).
-- **Floor는 chopper 때문임.** 1st-integrator 시험에서 측정한 크기(±0.53 %)의, cycle마다 부호가 바뀌는 state 오차를 넣은 2nd-order loop의 behavioral model은 3–6 kHz에서 약 1e-11 FS²/Hz를 줌. 오차가 없으면 2.6e-14이고 (같은 model, 8192 sample), 잡음 없는 트랜지스터 레벨 run에서는 3–6e-12가 측정됨 (같은 자릿수이며 오차 0.2 %는 1.5e-12). 오차는 고주파 성분이 큰 1st-integrator 출력에 곱해져 그 성분을 대역 안으로 옮김. 대부분 solver 때문이 아님: `reltol`을 33배 엄격하게 해도(1e-4 → 3e-6) floor는 2–4배만 내려갔고 (tolerance의 비중은 작음), chopper clock을 low로 고정하면 1st integrator의 step 오차가 사라짐.
+- **Floor는 chopper 때문임.** 1st-integrator 시험에서 측정한 크기(±0.53 %)의, cycle마다 부호가 바뀌는 state 오차를 넣은 2nd-order loop의 behavioral model은 3–6 kHz에서 약 1e-11 FS²/Hz를 줌. 오차가 없으면 2.6e-14이고 (같은 model, 8192 sample), 잡음 없는 트랜지스터 레벨 run에서는 3–6e-12가 측정됨 (같은 자릿수이며 오차 0.2 %는 1.5e-12). 오차는 chopper에서 나오며(clock overlap과 출력 chopper의 위치, Integrator 참조, 둘 다 이후 수정함) 고주파 성분이 큰 1st-integrator 출력에 곱해져 그 성분을 대역 안으로 옮김. 대부분 solver 때문이 아님: `reltol`을 33배 엄격하게 해도(1e-4 → 3e-6) floor는 2–4배만 내려갔고 (tolerance의 비중은 작음), chopper clock을 low로 고정하면 1st integrator의 step 오차가 사라짐.
 
 ### 6. SNDR
 **Methodology**
@@ -649,20 +653,20 @@ $R_{on}$은 switch가 on인 동안 10 mV sense source를 둔 느린 입력 ramp�
 | Result | Value | Condition |
 |---|---|---|
 | Ideal behavioral model | 115.5 dB (full rate) / 99.4 dB (filtered) ¹ | $N$ = 65536, 2 kHz 대역 |
-| Transistor level, noisy | 68.4 dB (ENOB 11.1) / 69.9 dB (filtered) | 32 ms, chopper 오차 ² |
+| Transistor level, noisy | 68.4 dB (ENOB 11.1) / 69.9 dB (filtered) | 32 ms, 첫 설계 (chopper 수정 전) ² |
 | Transistor level, noisy, 1.5 kHz 대역 | 69.6 dB / 70.4 dB (filtered) | 같은 run |
 | Transistor level, noise-free | $\approx$ 70 dB | 2.4 ms, `reltol` = 3e-6 ³ |
 | Noise budget에서 추정 | $\approx$ 96 dB (ENOB 15.7) | Ideal chopper ⁴ |
 
 ¹ Filtered 값은 측정 chain(decimation filter, 출력 329 sample)의 한계임: 설계 목표(98.1 dB) 근처의 SNDR은 분해하지 못함. 비교에는 full-rate 값을 사용함.
 
-² Floor는 chopper 극성 전환 오차(2nd-order modulator 참조)이며 잡음 없이도 나타남.
+² Floor는 chopper 극성 전환 오차(2nd-order modulator 참조)이며 잡음 없이도 나타남. 측정은 chopper를 수정하기 전의 회로로 했고(Integrator 참조) 다시 하지 않았음.
 
 ³ 3–6 kHz의 floor (5.9e-12 FS²/Hz, ±1 bit stream)가 대역에서 flat하다고 가정하고 2 kHz로 적분한 값.
 
 ⁴ Ideal chopper를 가정한 Quantization + kT/C + OTA 1 noise (Noise analysis 참조).
 
-- 측정값 68–70 dB는 시뮬레이션한 회로 자체의 SNDR임: floor는 chopper 극성 전환 오차에서 나오며(2nd-order modulator 참조) 잡음을 주입하지 않아도 있음. Noise budget의 96 dB는 이상적인 chopper를 가정한 값이므로 이 오차를 없애기 전에는 도달하지 못함. 허용 오차를 엄격히 하면 run이 약 10배 느려져 65536 sample record를 끝내지 못함 (Limitations 참조).
+- 측정값 68–70 dB는 시뮬레이션한 회로 자체의 SNDR임: floor는 chopper 극성 전환 오차에서 나오며(2nd-order modulator 참조) 잡음을 주입하지 않아도 있음. 이 run은 chopper 수정 전의 회로임. Noise budget의 96 dB는 이상적인 chopper를 가정한 값이므로, 수정한 회로를 다시 시뮬레이션해야 얼마나 가까워졌는지 알 수 있음. 허용 오차를 엄격히 하면 run이 약 10배 느려져 65536 sample record를 끝내지 못함 (Limitations 참조).
 - Noise budget은 약 96 dB로, 요구(95.2 dB)보다 약 0.9 dB 높고 설계 목표(98.1 dB)보다 약 2 dB 낮음. 이 추정은 트랜지스터 레벨 run으로 확인하지 못했음.
 
 ### 7. Noise analysis
@@ -717,8 +721,8 @@ Transient simulation에는 device noise가 포함되지 않으므로, 잡음을 
 ## Limitations & Next Steps
 
 **결과의 한계**
-- **현재 회로의 SNDR은 약 70 dB임.** 측정한 68–70 dB는 잡음 없는 run에도 있는 대역 내 floor가 정함. 이 floor는 chopper가 극성을 바꿀 때마다 출력의 약 0.5 %만큼 더하는 오차에서 나옴 (1st integrator step의 홀짝 교대; chopper clock을 low로 고정하면 사라지고, 이 오차를 넣은 behavioral model이 floor를 재현함). 오차의 메커니즘은 아직 확인하지 못함.
-- **Chopper는 한 한계를 다른 한계로 바꿈.** Chopper가 없으면 OTA의 flicker noise가 SNDR을 약 70 dB로 제한하고, chopper가 있으면 flicker는 28.6 dB 감소하는 것으로 추정되지만 현재 구성에서는 반전 오차가 SNDR을 약 70 dB로 제한함. 두 한계의 원인은 다름: flicker는 OTA 고유의 성질이고, 반전 오차는 줄일 수 있는 회로 문제임 (반전이 없으면 0이고 반전 횟수가 줄면 감소함). Noise budget의 96 dB는 이 오차를 제거해야만 도달 가능함.
+- **수정한 회로의 SNDR은 아직 측정하지 못함.** 측정한 68–70 dB는 첫 설계의 값임: 잡음 없는 run에도 있는 대역 내 floor이며, chopper가 극성을 바꿀 때마다 출력의 약 0.5 %만큼 더하는 오차에서 나옴 (1st integrator step의 홀짝 교대; 이 오차를 넣은 behavioral model이 floor를 재현함). 원인은 chopper clock overlap과 출력 chopper가 OTA 출력 node를 flip하는 것이었음 (Integrator 참조). 둘 다 수정했고 1st integrator의 교대는 35–56 µV에서 0.05 µV로 줄었지만 modulator는 아직 다시 시뮬레이션하지 않았음.
+- **Chopper는 비이상 요소까지 넣어 시뮬레이션해야 함.** Chopper가 없으면 OTA의 flicker noise가 SNDR을 약 70 dB로 제한함. Chopper가 있으면 flicker는 28.6 dB 감소하는 것으로 추정되지만, 첫 설계에서는 반전 오차가 같은 수준의 한계를 정했음. Noise budget의 96 dB는 수정한 chopper에 그런 오차가 남지 않는다고 가정한 값임.
 - **전체 record로 SNDR을 측정하지 못함.** 트랜지스터 레벨 modulator(OTA 2개, chopper, SC CMFB)는 느슨한 solver 허용 오차에서 32 ms(65536 cycle)에 약 16시간이 걸렸고, 허용 오차를 엄격히 하면 run이 약 10배 느려짐 (시간당 약 0.2 ms).
 - Noise budget은 $\approx$ 96 dB (ENOB 15.7)를 주며, 이는 요구(95.2 dB)를 약 0.9 dB 차이로 만족하고 설계 목표(98.1 dB)에는 약 2 dB 못 미치는 값이지만, 위의 대역 내 floor를 포함하지 않으므로 그 floor가 제거되어야만 유효함. Chopper 이후 남는 OTA 1 noise가 가장 큰 항임 (전체 4.2e-11 V² 중 2.6e-11). 이 추정은 sampling에 의한 OTA 열잡음 folding을 무시하므로 낙관적일 가능성이 높음.
 - Flicker noise의 chopper 개선(28.6 dB)은 이상적인 chopper를 가정한 해석적 추정임. 잡음 없는 run(A: 2.4 ms만)과 chopper 없는 run(B)은 완료하지 못함.
@@ -726,7 +730,7 @@ Transient simulation에는 device noise가 포함되지 않으므로, 잡음을 
 - Pre-layout만 수행함. parasitic extraction이 없고, modulator의 process corner와 온도 simulation이 없으며 (switch와 OTA만 수행), clock과 reference는 이상적이고, power는 static `.op` 값임.
 
 **Next steps**
-- **Chopper 오차 제거**: 메커니즘을 찾고(chopper TG를 이상적인 switch로 교체, 입력 또는 출력 chopper만 반전, TG 크기 변경) 고친다. Chopper 주파수를 낮추면 오차가 줄지만(model 기준 $f_s/8$에서 약 −7 dB, $f_s/16$에서 −12 dB) 대역에 남는 flicker noise가 늘어나므로 trade-off임.
+- **수정한 chopper로 modulator를 다시 시뮬레이션** (NOC 4위상 clock, OTA 내부 출력 chopper)하고 netlist, OTA 설명, 그림을 갱신함. 그런 다음 SNDR을 96 dB budget과 비교함. Floor가 남으면 chopper 주파수를 낮출 수 있음 (behavioral model 기준 $f_s/8$에서 약 −7 dB, $f_s/16$에서 −12 dB이지만 대역에 남는 flicker noise가 늘어남).
 - 가능한 시간 안에 엄격한 허용 오차의 트랜지스터 레벨 run을 완료함. 예를 들어 checkpoint(`stop` / `resume`) 시뮬레이션을 cloud 머신에서 돌리거나, 긴 run에서는 2nd integrator와 switch를 behavioral model로 대체해 비용을 줄임. 그런 다음 잡음 유무와 chopper 유무(A / B / C)별 SNDR을 측정함.
 - 1st OTA의 noise를 줄임 (입력쌍의 $g_m$ 증가, $g_{m3}/g_{m1}$ 감소, M3 / M4 면적 증가). OTA의 flicker corner는 수 MHz로 $f_{ch}$ = 1.024 MHz보다 높으므로 $f_{ch}$에 남는 noise(3.2e-15 V²/Hz)도 대부분 flicker이며, chopper 이후 budget에서 가장 큰 항임.
 - OTA 전력이 큼. kT/C 요구로 $C_s$ = 4 pF가 필요해 load capacitance가 커지며, 실제 회로에서 1st-stage OTA 전류는 한쪽당 $I_{tail}$ = 29.4 µA, $I_{out}$ = 101.5 µA, 총 전력은 684 µW임. 전력 최적화를 위해 이후 stage (2nd integrator, 2nd-stage OTA)의 스펙을 완화해야 함.
