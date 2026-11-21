@@ -17,7 +17,7 @@ A transistor-level (SKY130, Xschem / ngspice) 2nd-order 1-bit fully differential
 
 - The specifications (GBW, DC gain, slew rate, $C_s$, switch $R_{on}$) are derived step by step from the sensor noise and the 16-bit target (see Specifications).
 - SNDR: 115.5 dB for the ideal behavioral model. The noise-free transistor-level simulation reaches only about 70 dB because of an error that the chopper adds at every polarity reversal. With kT/C and flicker noise and an ideal chopper, the noise budget estimates $\approx$ 96 dB (15.7 bit): above the requirement (95.2 dB) and below the design target (98.1 dB).
-- The noisy run measures 68–70 dB, the same floor as without noise (see Limitations). A more accurate SNDR measurement is limited by the simulation time.
+- The noisy run measures 68–70 dB, the same floor as without noise. The chopper removes the flicker limit of about 70 dB (estimated improvement 28.6 dB) but adds an error of its own that limits the SNDR to about 70 dB as built. This error can be reduced (it is zero without reversals and falls with fewer reversals), so the 96 dB of the budget remains the goal (see Limitations). The limit is now the circuit, not the simulation time.
 - Integrator tests: the 2nd integrator is within 0.7 % of the ideal coefficients (DAC step 0.4355 V vs. 0.436 V, input step −12.04 mV vs. −12.1 mV). The 1st integrator has a DAC step +0.65 % and an input step −2 to −5 % with an odd / even alternation that is caused by the chopper.
 - Switches: the bootstrap switch has a monotonic $R_{on}$ (at most 1.41 kΩ, below the 2.43 kΩ limit). The TG reaches 0.9 kΩ, above the 0.5 kΩ target of the summing-node switch, so its width has to be increased.
 
@@ -27,21 +27,21 @@ A transistor-level (SKY130, Xschem / ngspice) 2nd-order 1-bit fully differential
 
 The specifications are derived from the target spec (sensor requirements), through system-level and circuit-level requirements, down to implementation choices. The derivation follows the modeling code in `matlab/behav_model.m` (originally `SystemModeling/ADC.mlx`).
 
-
 ### 1. Target Spec
 
 | Item | Value | Note |
 |---|---|---|
 | Application | MEMS accelerometer interface | Reference sensor: ADXL356C (±10 g / ±40 g) |
-| Input range | ±40 g | Sensor full scale = −6 dBFS (ADC full scale ≈ ±80 g) |
+| Input range | ±40 g | Sensor full scale = −6 dBFS ¹ (ADC full scale ≈ ±80 g) |
 | Signal BW | 2 kHz | |
-| Input amplitude | 40 g peak (28.3 g rms) | 0.6 V differential peak, −6 dBFS ¹ |
+| Input amplitude | 40 g peak (28.3 g rms) | 0.6 V differential peak |
 | Full scale (diff.) | ±1.2 V (VREFp 1.5 V / VREFn 0.3 V) | OTA swing > 0.3–1.5 V expected ² |
 | VCM | 0.9 V | Midpoint of VDD (1.8 V) and VSS |
 | ADC noise (rule of thumb) | At least 20 dB below the sensor noise | Avoid being the bottleneck |
 | SNDR / ENOB | ≥ 95.2 dB (15.5 bit); design 98.1 dB (16 bit) | See the derivation below |
 
 ¹ −6 dBFS keeps the input inside the stable range of the 1-bit 2nd-order modulator and leaves headroom for overloads beyond ±40 g (see Dynamic range scaling). The sensor output level is assumed to be matched in front of the ADC (ideal).
+
 ² Based on $V_{DS,sat}$ from the PDK MOS LUT [6], [7].
 
 ![Sensor interface](docs/figures/sensor_interface.svg)
@@ -72,6 +72,7 @@ The specifications are derived from the target spec (sensor requirements), throu
 | ADC noise relative to the sensor | $\approx$ 22.9 dB lower |
 
 ¹ The sensor BW is 1.5 kHz and the signal band is 2 kHz, so integrating over 2 kHz is conservative (about 1.2 dB higher than over 1.5 kHz).
+
 ² The required 15.5 bit is rounded up to the next integer bit, which gives about 3 dB of margin.
 
 - Noise powers add, so an ADC whose noise is 20 dB below the sensor's costs only about 0.04 dB of SNR (0.4 dB if it is 10 dB below).
@@ -96,7 +97,7 @@ The specifications are derived from the target spec (sensor requirements), throu
 - One comparator is enough, so the circuit is simple, small and low-power.
 - The price of 1 bit is a larger quantization noise. Oversampling covers it: the signal band is only 2 kHz, so even with OSR 512 the sampling rate is just 2.048 MHz.
 
-**Noise budget and modeling**
+**Quantization noise modeling**
 - The input is −6 dBFS with a differential peak of 0.6 V, so $P_{signal} = 0.18\ \mathrm{V^2}$, and OSR 512 gives an ENOB of $\approx$ 17.
 - In-band quantization noise (Taylor approximation) [3]:
 
@@ -191,7 +192,7 @@ D(z)=(z-p_1)(z-p_2)=(z-1)^2+(\mu_1+\mu_2)(z-1)+\mu_1\mu_2
 IBQN=IBQN_{ideal}+\Delta IBQN,\qquad \Delta IBQN=\frac{\Delta^2}{12k_{eff}^2}\cdot\frac{\pi^2(\mu_1+\mu_2)^2}{3\,OSR^3}
 ```
 
-**4) Allowed $\mu$**: $\Delta IBQN$ = 1.94e-12 − 4.68e-13 = 1.48e-12 (normalized)
+**4) Allowed $\mu$**: $\Delta IBQN$ = 1.94e-12 − 4.68e-13 = 1.48e-12 (normalized; 1.94e-12 is the quantization noise allowed at the target SQNR of 108.1 dB, with a signal power of 0.125 in units of FS = 1)
 
 ```math
 \mu_{max}=\frac{6\,k_{eff}\,OSR^{3/2}\sqrt{\Delta IBQN}}{\pi\,\Delta}=8.4\times10^{-3}
@@ -206,7 +207,7 @@ A_0\ge\frac{g_1+g_2}{\mu_{max}}=\frac{0.6+0.96}{8.4\times10^{-3}}\approx186\;(45
 - The exact (root-sum-square) form gives $\sqrt{g_1^2 + g_2^2} / \mu_{max} \approx 135$ (42.6 dB), so the approximation above is about 2.7 dB conservative.
 
 ![SQNR vs OTA gain](docs/figures/gain_vs_sqnr.svg)
-*SQNR versus OTA DC gain (conservative model, $\mu_1 + \mu_2$) and the leakage contribution of each stage at the spec gain.*
+*SQNR versus OTA DC gain (conservative model, $\mu_1+\mu_2$) and the leakage contribution of each stage at the spec gain.*
 
 #### Slew rate
 
@@ -318,9 +319,13 @@ R_{on}\le\frac{t}{N_{err}\,(C_s+C_d)}
 | Supply / power | 1.8 V / 684 µW | | 380 µA from VDD ⁵ |
 
 ¹ 25 °C, closed-loop AC (loop gain with the feedback factor $\beta$); PM required for $\zeta$ = 0.707.
+
 ² Equivalent GBW = loop crossover / $\beta$: OTA 1 14.57 MHz with $\beta_1$ = 0.6, OTA 2 13.28 MHz with $\beta_2$ = 0.508. The required loop crossover is $\beta\cdot GBW$ = 10.6 MHz (OTA 1) and 8.9 MHz (OTA 2).
+
 ³ 0.85–1.04 kΩ at ss, 27 °C; the worst case is ss, 125 °C. The 2.43 kΩ limit is set by $C_s + C_d$ = 8.4 pF.
+
 ⁴ Over all corners and temperatures; the target is for a pole well above the loop crossover, so the width has to be increased (about 2×).
+
 ⁵ Static `.op`, bias only.
 
 ---
@@ -499,11 +504,13 @@ Closed-loop AC simulation of the OTA with the loop closed at DC only (inductors)
 | Metric | Required | OTA 1 | OTA 2 |
 |---|---|---|---|
 | DC loop gain (`dc_loop_gain_db`) | ≥ 45.3 dB | 58.5 dB | 55.3 dB |
-| Loop crossover $f_{u,loop}$ ($\beta$ included) | ≥ $\beta\cdot GBW$ = 10.6 MHz (OTA 1, $\beta_1$ = 0.6) / 8.9 MHz (OTA 2, $\beta_2$ = 0.508), GBW = 17.6 MHz | 14.57 MHz (equivalent GBW 24.3 MHz) | 13.28 MHz (equivalent GBW 26.1 MHz) |
+| Loop crossover $f_{u,loop}$ | ≥ 10.6 / 8.9 MHz ¹ | 14.57 MHz | 13.28 MHz |
 | Phase margin | $\approx$ 65.5° ($\zeta$ = 0.707) | 65.0° | 62.5° |
 | Output common mode | 0.9 V | 0.9020 V | 0.9023 V |
 | 1st-stage tail current $I_{tail}$ | — | 29.4 µA | 14.8 µA |
 | 2nd-stage current $I_{out}$ (per side) | — | 101.5 µA | 52.6 µA |
+
+¹ Required $\beta\cdot GBW$ with GBW = 17.6 MHz: 10.6 MHz for OTA 1 ($\beta_1$ = 0.6) and 8.9 MHz for OTA 2 ($\beta_2$ = 0.508). Equivalent GBW = crossover / $\beta$: 24.3 MHz (OTA 1) and 26.1 MHz (OTA 2).
 
 - Both OTAs meet the DC gain and the crossover. The phase margin of OTA 1 (65.0°) is at the target, and that of OTA 2 (62.5°) is 3.0° below the 65.5° target but above 60°. The integrator tests show that the output settles below 1 LSB before the sampling point (see Integrator).
 - All devices of OTA 1 are in saturation (operating-point table in the OTA description). The noise of the OTA is analyzed in Noise analysis.
@@ -578,12 +585,14 @@ The worst case is ss at 125 °C with at most 1.40 kΩ, below the 2.43 kΩ limit 
 
 | Metric | Ideal | Result |
 |---|---|---|
-| DAC step (1st integrator) | 0.360 V | 0.3623 V (+0.65 %, mean of 17 cycles; 0.358 – 0.371 V per cycle) |
+| DAC step (1st integrator) | 0.360 V | 0.3623 V (+0.65 %) ² |
 | Input step (1st integrator) | −6.00 mV | −5.70 mV (−4.9 %) ¹ |
 | Output CM | 0.9 V | 0.9017 V (ripple 1.3 mV) |
 | Settling residue, last 40 ns of $\phi_2$ | < 0.5 LSB | DAC 5.2 µV (0.28 LSB), input 3.7 µV (0.20 LSB) |
 
 ¹ Mean of cycles 3–39; odd cycles −6.26 mV, even cycles −5.09 mV (cycles 3–38). See the bullets below.
+
+² Mean of 17 cycles; 0.358–0.371 V per cycle.
 
 - The input step alternates between odd and even cycles around the mean, and the alternation grows with the output level during the 39 cycles (±0.3 mV at cycle 10, ±1.2 mV in the last cycles, about 0.5 % of the output voltage). The mean step is −4.9 % off the ideal value.
 - **The chopper is the cause.** With the chopper clock held low (`tb_integrator_chopper_timing.spice`) the alternation is 0.00 mV and the mean step is −5.97 mV (−0.5 %). The 2nd integrator has no chopper and shows no alternation (0.01 mV).
@@ -607,21 +616,23 @@ The worst case is ss at 125 °C with at most 1.40 kΩ, below the 2.43 kΩ limit 
 |---|---|---|
 | DAC step (2nd integrator) | 0.436 V | 0.4355 V (−0.19 %) |
 | Input step (2nd integrator) | −12.1 mV | −12.04 mV (−0.66 %) |
-| Output CM (2nd integrator, $V_{bias}$ = 0.69 V) | 0.9 V | 0.9013 V (ripple 1.4 mV, within 1 mV after 100 cycles = 49 µs) |
+| Output CM (2nd integrator, $V_{bias}$ = 0.69 V) | 0.9 V | 0.9013 V ¹ |
 | Settling residue, last 40 ns of $\phi_2$ (2nd integrator) | < 0.5 LSB | DAC 0.25 µV (0.014 LSB), input 0.01 µV |
+
+¹ Ripple 1.4 mV; within 1 mV after 100 cycles (49 µs).
 
 ![Integrator 2 settling](docs/figures/integ2_settling.svg)
 *Output error of the 2nd integrator within one cycle (log scale; 1 LSB = 18.3 µV): the DAC step settles below 1 LSB at about 360 ns and the DC-input step at about 310 ns of the 488 ns cycle, well before the sampling point at 485 ns. The spike at the sampling point is the switching transient of the clock edge.*
 
 ### 5. 2nd-order modulator
 - 40 dB/dec noise shaping.
-- Earlier noiseless run (before the capacitor change, 4 ms): PSD within +0.3 dB of an ideal 2nd-order model with the same input and length, recovered sine amplitude 0.5948 V (input 0.6 V).
+- Earlier noiseless run (before the capacitor change, 4 ms): PSD within +0.3 dB of an ideal 2nd-order model with the same input and length (out-of-band comparison), recovered sine amplitude 0.5948 V (input 0.6 V).
 
 ![Modulator output spectrum](docs/figures/psd_overlay.svg)
 *Output spectrum of the transistor-level modulator (noise injected, 32 ms, 65536 samples) against the ideal behavioral model with the same input. (a) Above about 20 kHz the shaped noise of the two agrees. In band the transistor-level floor is flat at about −92 dBFS per bin, far above the ideal model. (b) In band after the decimation filter (the dashed lines are 1.5 kHz and 2 kHz).*
 
-- The in-band floor of the transistor-level run is not caused by the injected noise: noise-free runs show the same floor (3–6 kHz: 5.9e-12 V²/Hz against 4.1e-14 for the ideal model, `reltol` = 3e-6, 2.4 ms record; units of a ±1 bit stream).
-- **The floor is caused by the chopper.** A behavioral model of the 2nd-order loop with a state error of ±0.53 % that alternates in sign at every cycle (the size measured in the 1st-integrator test) gives about 1e-11 V²/Hz at 3–6 kHz, against 2.6e-14 without the error and 3–6e-12 measured in the noise-free transistor-level runs (the same order; an error of 0.2 % gives 1.5e-12). The error multiplies the 1st-integrator output, which has large high-frequency content, and moves it into the band. It is not the solver: a 33 times tighter `reltol` (1e-4 → 3e-6) lowered the floor only by 2–4 times, and with the chopper clock held low the step error of the 1st integrator disappears.
+- The in-band floor of the transistor-level run is not caused by the injected noise: noise-free runs show the same floor (3–6 kHz: 5.9e-12 FS²/Hz against 4.1e-14 for the ideal model, `reltol` = 3e-6, 2.4 ms record; bit stream of ±1).
+- **The floor is caused by the chopper.** A behavioral model of the 2nd-order loop with a state error of ±0.53 % that alternates in sign at every cycle (the size measured in the 1st-integrator test) gives about 1e-11 FS²/Hz at 3–6 kHz, against 2.6e-14 without the error (same model, 8192 samples) and 3–6e-12 measured in the noise-free transistor-level runs (the same order; an error of 0.2 % gives 1.5e-12). The error multiplies the 1st-integrator output, which has large high-frequency content, and moves it into the band. It is mostly not the solver: a 33 times tighter `reltol` (1e-4 → 3e-6) lowered the floor only by 2–4 times (the tolerance has a small share), and with the chopper clock held low the step error of the 1st integrator disappears.
 
 ### 6. SNDR
 **Methodology**
@@ -639,8 +650,11 @@ The worst case is ss at 125 °C with at most 1.40 kΩ, below the 2.43 kΩ limit 
 | Estimate from the noise budget | $\approx$ 96 dB (ENOB 15.7) | Ideal chopper ⁴ |
 
 ¹ The filtered value is the limit of the measurement chain (decimation filter, 329 output samples): it cannot resolve an SNDR near the design target (98.1 dB). The full-rate value is used for the comparison.
+
 ² The floor is the chopper reversal error (see 2nd-order modulator) and is also present without noise.
-³ From the floor at 3–6 kHz (5.9e-12 V²/Hz in units of a ±1 bit stream) integrated over 2 kHz.
+
+³ From the floor at 3–6 kHz (5.9e-12 FS²/Hz, bit stream of ±1), assumed flat in the band and integrated over 2 kHz.
+
 ⁴ Quantization + kT/C + OTA 1 noise with an ideal chopper (see Noise analysis).
 
 - The measured 68–70 dB is the SNDR of the circuit as simulated: the floor comes from the chopper reversal error (see 2nd-order modulator) and is also present without injected noise. The 96 dB of the noise budget assumes an ideal chopper and is not reached until this error is removed. The tighter tolerances make the run about 10 times slower, so a 65536-sample record could not be completed (see Limitations).
@@ -660,12 +674,15 @@ The transient simulation does not include device noise, so the noise is analyzed
 | Total with chopper (estimate) | 4.2e-11 V² | 96.3 dB | Quantization + kT/C + chopped OTA |
 
 ¹ $k_{eff}$ = 0.628; 4.68e-13 in units of FS = 1 (1.2 V), × 1.44 to V². Budget: 2.8e-12 V².
+
 ² $8kT/C_s$ = 7.84e-9 V² (2 branches × 2 phases × 2 sides, 25 °C, $C_s$ = 4.2 pF), divided by OSR = 512.
+
 ³ 4.75e-9 V² (1 Hz – 2 kHz) times the capacitor ratio $\left(\dfrac{C_s+C_d}{C_s}\right)^2$ = 4.
+
 ⁴ Ideal chopper: the flicker noise moves to $f_{ch}$ = 1.024 MHz (see below).
 
 - The OTA flicker noise is the bottleneck of the in-band noise, which is why the chopper was introduced (see Architecture).
-- Estimated improvement with an ideal chopper at $f_{ch}$ = 1.024 MHz: the flicker noise moves to $f_{ch}$, so only the noise density at $f_{ch}$ (3.2e-15 V²/Hz) remains in the band. That is 6.5e-12 V² in 2 kHz, or 2.6e-11 V² with the capacitor ratio of 4, against 1.9e-8 V² without the chopper: an improvement of about 730 times (28.6 dB). The estimate assumes ideal chopping and ignores both the folding of the OTA thermal noise by the sampling and the chopper non-idealities, so the real improvement is smaller.
+- Estimated improvement with an ideal chopper at $f_{ch}$ = 1.024 MHz: the flicker noise moves to $f_{ch}$, so only the noise density at $f_{ch}$ (3.2e-15 V²/Hz) remains in the band; at $f_{ch}$ the OTA noise is still mostly flicker, because the flicker corner is a few MHz. That is 6.5e-12 V² in 2 kHz, or 2.6e-11 V² with the capacitor ratio of 4, against 1.9e-8 V² without the chopper: an improvement of about 730 times (28.6 dB). The estimate assumes ideal chopping and ignores both the folding of the OTA thermal noise by the sampling and the chopper non-idealities, so the real improvement is smaller.
 - Per-device contribution: the NMOS loads of the 1st stage dominate. The input-referred noise of OTA 1 in 1 Hz – 2 kHz (`.noise`, 25 °C) totals 4.75e-9 V² (68.9 µV rms):
 
 | Device (pair) | Power (V²) | Share |
@@ -688,23 +705,24 @@ The transient simulation does not include device noise, so the noise is analyzed
   - Flicker source `trnoise(0 1u 0.85 66.4u)`: no white part (NA = 0), NT = 1 µs, exponent NALPHA = 0.85, amplitude NAMP = 66.4 µ; measured slope $f^{-0.81}$ and 9.7e-13 V²/Hz at 1 kHz (2.9e-12 at 100–300 Hz, 6.3e-13 at 1–3 kHz, 9.4e-14 at 10–30 kHz).
     - NAMP was set by proportional scaling: a standalone run with NAMP = 1 µ gives the PSD coefficient $`K = S(f)\,f^{0.85}`$ (mean over 1–100 kHz, 8.9e-14 V²), and $`NAMP = 1\,\mu \times \sqrt{K_{target}/K_{meas}}`$ with the target $K_{target}$ = 4e-10 V² (the 1st OTA `.noise` at 1 Hz, 2e-5 V/√Hz) gives 66.4 µ. The PSD scales with NAMP² and depends on NT, so the same NT = 1 µs as in the modulator was used.
     - The target was taken from an earlier OTA. For the current OTA (`.noise`, $I_{tail}$ = 30.8 µA) the PSD at 1 kHz is 9.67e-13 V²/Hz, which equals the injected 9.67e-13 V²/Hz. The injected noise is within 30 % of the OTA at 100–300 Hz (the OTA slope is $f^{-0.84}$ against $f^{-0.81}$) and within a few % at 1–30 kHz.
-- Comparison runs: (A) no noise, (B) noise without chopper, (C) noise with chopper. Only a run with noise and the chopper (C, 32 ms) was completed; A and B were not, because of the run time (see Limitations).
+- Comparison runs: (A) no noise, (B) noise without chopper, (C) noise with chopper. The run with noise and the chopper (C) was done for 32 ms, the run without noise (A) only for 2.4 ms, and B was not completed, because of the run time (see Limitations).
 - The flicker noise of the 2nd OTA is not injected. Referred to the modulator input it is attenuated by the gain of the 1st integrator ($\approx$ 98 at 1 kHz), and the estimate is 1e-12 – 3e-12 V² in band (a few % of the noise budget, about 0.1 – 0.3 dB).
 
 ## Limitations & Next Steps
 
 **Limitations of the results**
 - **The SNDR of the circuit as built is about 70 dB.** The measured 68–70 dB is set by an in-band floor that is also present in noise-free runs. It comes from an error of about 0.5 % of the output that the chopper adds at every polarity reversal (the alternation of the 1st-integrator step; with the chopper clock held low it disappears, and a behavioral model with this error reproduces the floor). The mechanism of the error is not yet identified.
+- **The chopper trades one limit for another.** Without it, the flicker noise of the OTA would limit the SNDR to about 70 dB; with it, the flicker is estimated to drop by 28.6 dB, but the reversal error limits the SNDR to about 70 dB as built. The two limits have different causes: the flicker is inherent to the OTA, while the reversal error is a circuit problem that can be reduced (it is zero without reversals and falls with fewer reversals). The 96 dB of the noise budget is reachable only if this error is removed.
 - **The SNDR could not be measured over a full record.** The transistor-level modulator (2 OTAs, choppers, SC CMFB) took about 16 h for 32 ms (65536 cycles) with loose solver tolerances, and tighter tolerances make the run about 10 times slower (about 0.2 ms per hour).
 - The noise budget gives $\approx$ 96 dB (ENOB 15.7), which would meet the requirement (95.2 dB) by about 0.9 dB and miss the design target (98.1 dB) by about 2 dB, but it does not include the in-band floor above, so it is valid only if that floor is removed. The OTA 1 noise remaining after the chopper is the largest term (2.6e-11 of 4.2e-11 V²). The estimate ignores the folding of the OTA thermal noise by the sampling, so it is probably optimistic.
-- The chopper improvement of the flicker noise (28.6 dB) is an analytic estimate for an ideal chopper. The comparison runs without noise and without the chopper (A, B) were not completed.
+- The chopper improvement of the flicker noise (28.6 dB) is an analytic estimate for an ideal chopper. The comparison runs without noise (A: only 2.4 ms) and without the chopper (B) were not completed.
 - The noise of the 2nd OTA is not injected (estimated at 0.1 – 0.3 dB).
 - Pre-layout only: no parasitic extraction, no process corners or temperature for the modulator (only for the switches and the OTA), the clocks and the references are ideal, and the power is a static `.op` value.
 
 **Next steps**
 - **Remove the chopper error**: find the mechanism (replace the chopper TGs by ideal switches, reverse only the input or only the output chopper, vary the TG size), then fix it. A lower chopper frequency reduces the error (the model gives about −7 dB at $f_s/8$ and −12 dB at $f_s/16$) but raises the flicker noise that remains in the band, so it is a trade-off.
 - Complete a transistor-level run with tight tolerances in the time available, for example by running the checkpointed simulation (`stop` / `resume`) on a cloud machine, or reduce the cost by replacing the 2nd integrator and the switches by behavioral models for the long run. Then measure the SNDR with and without the noise and with and without the chopper (A / B / C).
-- Reduce the noise of the 1st OTA (more $g_m$ of the input pair, a smaller $g_{m3}/g_{m1}$, a larger area of M3 / M4), because it limits the SNDR after the chopper.
+- Reduce the noise of the 1st OTA (more $g_m$ of the input pair, a smaller $g_{m3}/g_{m1}$, a larger area of M3 / M4). The flicker corner of the OTA is a few MHz, above $f_{ch}$ = 1.024 MHz, so the noise that remains at $f_{ch}$ (3.2e-15 V²/Hz) is still mostly flicker, and it is the largest term of the budget after the chopper.
 - The OTA power is large ($C_s$ = 4 pF is required by kT/C, so the load capacitance grows, and the 1st-stage OTA current is $I_{tail}$ = 29.4 µA and $I_{out}$ = 101.5 µA per side in the real circuit, 684 µW in total). The specs of the later stages (2nd integrator, 2nd-stage OTA) need to be relaxed to optimize the power.
 - Consider Indirect Miller compensation [8] to reduce the current: connecting the Miller capacitor to an internal node (for example the cascode node) instead of the output reduces the $g_{m2}$ (and therefore $I_{out}$) needed for the same GBW / PM.
 
