@@ -1,0 +1,66 @@
+** Chopper standalone test: (1) switching spike / charge injection with zero input, (2) modulation of a differential sine to f_ch +- f_in.
+** Same chopper, TG size and clock generation (clkCh_nd -> nand2 / inv) as the top level (DeltaSigmaADC_L2).
+** Load: source resistance 1k (the SC network driving the chopper) and 0.5 pF at each output (OTA input).
+** Results: /foss/designs/chopper_spike.txt and chopper_mod.txt (copy to results/chopper/), analyzed by matlab/analyze_chopper.m
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 25
+.param amp=0.3
+.param fin=20k
+
+V2 VDD 0 1.8
+V3 VSS 0 0
+Vclk_ch_nd clkCh_nd 0 dc 0 PULSE 0 1.8 120n 0.1n 0.1n 488.18n 976.56n
+x34 VDD clkCh_nd VSS VSS VDD VDD clkCh_b sky130_fd_sc_hd__nand2_1
+x35 clkCh_b VSS VSS VDD VDD clkCh sky130_fd_sc_hd__inv_1
+
+Vin1 s1 0 SIN(0.9 {amp} {fin} 0 0 0)
+Vin2 s2 0 SIN(0.9 {amp} {fin} 0 0 180)
+Rs1 s1 IN1 1k
+Rs2 s2 IN2 1k
+x2 clkCh VDD clkCh_b VSS OUT1 IN1 OUT2 IN2 chopper
+CL1 OUT1 0 0.5p
+CL2 OUT2 0 0.5p
+
+.control
+  set wr_singlescale
+  option numdgt=7
+  * (1) zero input: only the switching spike is visible at the output.
+  *     The ideal symmetric circuit cancels the injected charge in the differential output, so the load of one side is made
+  *     5 % larger (mismatch) to see the residual; the single-ended OUT1 spike (common mode) is written as well.
+  alterparam amp=0
+  reset
+  alter CL2 = 0.525p
+  tran 0.1n 12u
+  let vout = v(OUT1)-v(OUT2)
+  wrdata /foss/designs/chopper_spike.txt vout v(OUT1) v(OUT2) v(clkCh) v(clkCh_b)
+  * (2) differential sine, 0.3 V amplitude per side (0.6 V diff peak = -6 dBFS), f_in = 20 kHz
+  alterparam amp=0.3
+  reset
+  alter CL2 = 0.5p
+  tran 1n 200u
+  let vout = v(OUT1)-v(OUT2)
+  let vin  = v(IN1)-v(IN2)
+  wrdata /foss/designs/chopper_mod.txt vout vin
+.endc
+
+.subckt chopper clk VDD clk_b VSS OUT1 IN1 OUT2 IN2
+x1 clk_b clk VDD VSS IN1 OUT1 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x2 clk clk_b VDD VSS IN1 OUT2 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x3 clk clk_b VDD VSS IN2 OUT1 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x4 clk_b clk VDD VSS IN2 OUT2 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+.ends
+
+.subckt TG_switch clk_bar clk VDD VSS n1 n2  Wn=3.0 Wp=10.0 LL=0.35
+XM3 n1 clk n2 VSS sky130_fd_pr__nfet_01v8_lvt L=LL W=Wn nf=1 ad='int((1 + 1)/2) * Wn / 1 * 0.29' as='int((1 + 2)/2) * Wn / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (Wn / 1 + 0.29)' ps='2*int((1 + 2)/2) * (Wn / 1 + 0.29)' nrd='0.29 / Wn ' nrs='0.29 / Wn ' sa=0 sb=0 sd=0 mult=1
+XM4 n1 clk_bar n2 VDD sky130_fd_pr__pfet_01v8_lvt L=LL W=Wp nf=1 ad='int((1 + 1)/2) * Wp / 1 * 0.29' as='int((1 + 2)/2) * Wp / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (Wp / 1 + 0.29)' ps='2*int((1 + 2)/2) * (Wp / 1 + 0.29)' nrd='0.29 / Wp ' nrs='0.29 / Wp ' sa=0 sb=0 sd=0 mult=1
+.ends
+
+.end

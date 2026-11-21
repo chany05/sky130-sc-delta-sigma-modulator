@@ -1,0 +1,17 @@
+** 2st-order DSM : 2 integrator + ideal comparator + DFF
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 27
+
+.options method=gear reltol=3e-6 vntol=3e-8 abstol=1e-12 chgtol=1e-15 trtol=2 interp
+.tran 488.28n 32.02m
+.save v(DAC)
+.control
+run
+wrdata ram_out/dsm_noise.txt v(DAC)
+.endc

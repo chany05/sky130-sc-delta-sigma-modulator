@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="830" viewBox="0 0 780 830">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#222222"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666666"/></marker></defs><rect x="1" y="1" width="778" height="828" rx="10" fill="#FFFFFF" stroke="#E2E2E2" stroke-width="1.5"/>
+<line x1="191.08544277873352" y1="40" x2="456.0854427787335" y2="40" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<line x1="456.0854427787335" y1="40" x2="191.08544277873352" y2="40" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="323.5854427787335" y="30" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">T = 488.28 ns (fs = 2.048 MHz)</text>
+<rect x="191.09" y="84" width="129.22" height="395" fill="#F2F2F2"/>
+<text x="255.69642418284593" y="62" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal">&#966;1</text>
+<text x="255.69642418284593" y="77" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">sampling</text>
+<text x="388.19642418284593" y="62" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal">&#966;2</text>
+<text x="388.19642418284593" y="77" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">integration + DAC</text>
+<rect x="456.09" y="84" width="129.22" height="395" fill="#F2F2F2"/>
+<text x="520.6964241828459" y="62" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal">&#966;1</text>
+<text x="520.6964241828459" y="77" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">sampling</text>
+<text x="653.1964241828459" y="62" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal">&#966;2</text>
+<text x="653.1964241828459" y="77" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">integration + DAC</text>
+<text x="176" y="124" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;1 (clk1)</text>
+<line x1="190" y1="130" x2="720" y2="130" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="170" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;1e</text>
+<line x1="190" y1="176" x2="720" y2="176" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="216" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;2 (clk2)</text>
+<line x1="190" y1="222" x2="720" y2="222" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="262" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;2e</text>
+<line x1="190" y1="268" x2="720" y2="268" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="308" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">clkDp = D &#183; &#966;2</text>
+<line x1="190" y1="314" x2="720" y2="314" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="354" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">clkDn = <tspan text-decoration="overline">D</tspan> &#183; &#966;2</text>
+<line x1="190" y1="360" x2="720" y2="360" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="400" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;ch (clkCh)</text>
+<line x1="190" y1="406" x2="720" y2="406" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="446" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">DFF capture</text>
+<line x1="190" y1="452" x2="720" y2="452" stroke="#E0E0E0" stroke-width="1.0"/>
+<polyline points="190.00,130.00 191.09,130.00 191.09,104.00 320.31,104.00 320.31,130.00 456.09,130.00 456.09,104.00 585.31,104.00 585.31,130.00 720.00,130.00" fill="none" stroke="#444444" stroke-width="2.2"/>
+<polyline points="190.00,176.00 191.09,176.00 191.09,150.00 319.76,150.00 319.76,176.00 456.09,176.00 456.09,150.00 584.76,150.00 584.76,176.00 720.00,176.00" fill="none" stroke="#666666" stroke-width="2.2"/>
+<polyline points="190.00,222.00 323.59,222.00 323.59,196.00 452.81,196.00 452.81,222.00 588.59,222.00 588.59,196.00 717.81,196.00 717.81,222.00 720.00,222.00" fill="none" stroke="#444444" stroke-width="2.2"/>
+<polyline points="190.00,268.00 323.59,268.00 323.59,242.00 452.26,242.00 452.26,268.00 588.59,268.00 588.59,242.00 717.26,242.00 717.26,268.00 720.00,268.00" fill="none" stroke="#666666" stroke-width="2.2"/>
+<polyline points="190.00,314.00 323.59,314.00 323.59,288.00 452.81,288.00 452.81,314.00 720.00,314.00" fill="none" stroke="#444444" stroke-width="2.2"/>
+<polyline points="190.00,360.00 588.59,360.00 588.59,334.00 717.81,334.00 717.81,360.00 720.00,360.00" fill="none" stroke="#444444" stroke-width="2.2"/>
+<polyline points="190.00,406.00 255.13,406.00 255.13,380.00 520.07,380.00 520.07,406.00 720.00,406.00" fill="none" stroke="#444444" stroke-width="2.2"/>
+<text x="263.66928811337755" y="399" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="start" font-weight="normal">mid-&#966;1</text>
+<text x="528.7344146801016" y="399" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="start" font-weight="normal">mid-&#966;1</text>
+<line x1="191.08544277873352" y1="452" x2="191.08544277873352" y2="426" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="201.08544277873352" y="444" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="start" font-weight="normal">capture at &#966;1 &#8593;</text>
+<line x1="456.0854427787335" y1="452" x2="456.0854427787335" y2="426" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="466.0854427787335" y="444" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="start" font-weight="normal">capture at &#966;1 &#8593;</text>
+<rect x="318.08" y="92" width="7.60" height="380" fill="none" stroke="#888888" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text x="321.8812976161219" y="489" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#666666" text-anchor="middle" font-weight="normal">(A)</text>
+<g transform="translate(0,26)">
+<text x="190" y="522" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="15" fill="#222222" text-anchor="start" font-weight="normal">(A) Zoom: &#966;1 &#8594; &#966;2 transition (t = 236 ... 250 ns)</text>
+<text x="176" y="584" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;1</text>
+<line x1="190" y1="590" x2="470" y2="590" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="624" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;1e</text>
+<line x1="190" y1="630" x2="470" y2="630" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="664" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;2</text>
+<line x1="190" y1="670" x2="470" y2="670" stroke="#E0E0E0" stroke-width="1.0"/>
+<text x="176" y="704" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="end" font-weight="normal">&#966;2e</text>
+<line x1="190" y1="710" x2="470" y2="710" stroke="#E0E0E0" stroke-width="1.0"/>
+<polyline points="190.00,590.00 190.00,590.00 190.00,568.00 272.00,568.00 272.00,590.00 470.00,590.00" fill="none" stroke="#444444" stroke-width="2.2"/>
+<polyline points="190.00,630.00 190.00,630.00 190.00,608.00 252.00,608.00 252.00,630.00 470.00,630.00" fill="none" stroke="#666666" stroke-width="2.2"/>
+<polyline points="190.00,670.00 392.80,670.00 392.80,648.00 470.00,648.00 470.00,670.00 470.00,670.00" fill="none" stroke="#444444" stroke-width="2.2"/>
+<polyline points="190.00,710.00 392.80,710.00 392.80,688.00 470.00,688.00 470.00,710.00 470.00,710.00" fill="none" stroke="#666666" stroke-width="2.2"/>
+<line x1="251.9999999999999" y1="548" x2="251.9999999999999" y2="722" stroke="#AAAAAA" stroke-width="1.0" stroke-dasharray="4 4"/>
+<line x1="271.9999999999999" y1="548" x2="271.9999999999999" y2="722" stroke="#AAAAAA" stroke-width="1.0" stroke-dasharray="4 4"/>
+<line x1="392.7999999999997" y1="548" x2="392.7999999999997" y2="722" stroke="#AAAAAA" stroke-width="1.0" stroke-dasharray="4 4"/>
+<line x1="271.9999999999999" y1="556" x2="392.7999999999997" y2="556" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<line x1="392.7999999999997" y1="556" x2="271.9999999999999" y2="556" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="332.3999999999998" y="548" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">&#8776; 6 ns non-overlap</text>
+<line x1="227.9999999999999" y1="742" x2="251.9999999999999" y2="742" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<line x1="295.9999999999999" y1="742" x2="271.9999999999999" y2="742" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="303.9999999999999" y="746" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">1 ns early</text>
+<line x1="190" y1="722" x2="470" y2="722" stroke="#666666" stroke-width="1.4"/>
+<line x1="190.0" y1="722" x2="190.0" y2="728" stroke="#666666" stroke-width="1.4"/>
+<text x="190.0" y="742" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal"></text>
+<line x1="270.0" y1="722" x2="270.0" y2="728" stroke="#666666" stroke-width="1.4"/>
+<text x="270.0" y="742" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal"></text>
+<line x1="350.0" y1="722" x2="350.0" y2="728" stroke="#666666" stroke-width="1.4"/>
+<text x="350.0" y="742" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal"></text>
+<line x1="430.0" y1="722" x2="430.0" y2="728" stroke="#666666" stroke-width="1.4"/>
+<text x="430.0" y="742" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal"></text>
+<text x="190.0" y="764" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">236</text>
+<text x="350.0" y="764" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">244</text>
+<text x="430.0" y="764" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">248</text>
+<text x="270.0" y="764" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">240 ns</text>
+<text x="510" y="592" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#8226; &#966;1e / &#966;2e fall 1 ns early</text>
+<text x="510" y="614" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#160;&#160;&#160;(bottom-plate sampling)</text>
+<text x="510" y="636" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#8226; non-overlap gap &#8776; 6 ns</text>
+<text x="510" y="658" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#8226; DFF captures at &#966;1 &#8593;,</text>
+<text x="510" y="680" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#160;&#160;&#160;DAC acts during &#966;2</text>
+<text x="510" y="702" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#8226; chopper toggles at mid-&#966;1</text>
+<text x="40" y="786" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="start" font-weight="normal">Waveforms follow the netlist PULSE sources. DAC bit pattern (1, 0) is an example.</text>
+</g>
+</svg>

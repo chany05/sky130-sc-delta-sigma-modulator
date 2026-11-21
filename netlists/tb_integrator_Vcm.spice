@@ -1,0 +1,32 @@
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 27
+.param gen_stim=1
+.param gen_clk=0
+
+.param T=488.28n
+.if (gen_stim == 1)
+* ---- input: zero differential input (VCM)
+VinP INPUTp 0 dc 0.9
+VinN INPUTn 0 dc 0.9
+
+* ---- DAC bits (update just after phi1 rising edge, like the DFF)
+Vdac  DAC   0 PULSE(0 1.8 {3n}       0.1n 0.1n {2*T-0.2n} {4*T})
+Vdacb DAC_b 0 PULSE(0 1.8 {3n+2*T}   0.1n 0.1n {2*T-0.2n} {4*T})
+.endif
+.options method=gear reltol=1e-4 rshunt=1e12
+.save v(OUTp) v(OUTn) v(DAC) v(DAC_b) v(clk1_nd) v(clk2_nd) v(clk2e_nd)
+
+.control
+  set wr_singlescale
+  set wr_vecnames
+  option numdgt=8
+
+  tran 5n 100u 0 5n
+  wrdata /foss/designs/integ_dac_long.txt v(OUTp) v(OUTn)
+.endc

@@ -1,0 +1,14 @@
+** trnoise source check (no circuit): PSD of the kT/C source and of the flicker source used for noise injection.
+** Result: results/noise/trnoise_check.txt, analyzed by matlab/check_trnoise.m
+V1 n1 0 dc 0 trnoise(63.7u 488.28n 0 0)
+V2 n2 0 dc 0 trnoise(0 1u 0.85 66.4u)
+R1 n1 0 1k
+R2 n2 0 1k
+
+.control
+  set wr_singlescale
+  option numdgt=7
+  tran 0.2u 100m
+  wrdata /foss/designs/trnoise_check.txt v(n1) v(n2)
+.endc
+.end

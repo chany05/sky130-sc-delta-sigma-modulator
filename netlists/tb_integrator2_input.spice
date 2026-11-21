@@ -1,0 +1,48 @@
+** SC integrator 2 : DC input step test (no DAC feedback)
+** Testbench schematic: x1 = SC_Integrator_2 + supplies / biases only (same as tb_integrator2_dac.spice).
+** Differential input VD is integrated every cycle: expected output step = -(Cs2/Ci2)*VD = -12.1 mV for VD = 20 mV (Cs2/Ci2 = 20/33).
+** Run with VD = 20m, then with VD = 0 (offset / leakage check).
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 27
+
+.param T=488.28n
+* set to 0 when the schematic already contains that kind of source (a duplicate source gives a singular matrix)
+.param gen_stim=1
+.param gen_clk=0
+.param VD=20m
+
+.if (gen_stim == 1)
+* ---- differential DC input around VCM
+VinP INPUTp 0 dc {0.9 + VD/2}
+VinN INPUTn 0 dc {0.9 - VD/2}
+
+* ---- DAC off (both gated DAC clocks stay low)
+Vdac  DAC   0 dc 0
+Vdacb DAC_b 0 dc 0
+.endif
+
+
+.nodeset v(OUTp)=0.9 v(OUTn)=0.9
+.options method=gear reltol=1e-6 rshunt=1e12
+.save v(OUTp) v(OUTn) v(clk2_nd) v(clk2e_nd)
+
+.control
+  set wr_singlescale
+  set wr_vecnames
+  option numdgt=8
+
+  * run 1 : about 20 cycles (output ramps by about 6 mV per cycle)
+  tran 1n 10u 0 1n
+  wrdata /foss/designs/integ2_in.txt v(OUTp) v(OUTn) v(clk2_nd)
+
+  * run 2 : fine time step on later cycles -> settling residue
+  tran 0.2n 4.9u 2.4u 0.2n
+  wrdata /foss/designs/integ2_in_fine.txt v(OUTp) v(OUTn) v(clk2_nd) v(clk2e_nd)
+.endc
+.end

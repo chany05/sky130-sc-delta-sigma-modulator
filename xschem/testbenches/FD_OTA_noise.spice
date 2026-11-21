@@ -1,0 +1,22 @@
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+
+.temp 25
+
+* Vin: 차동 입력 소스 (ac 1)
+.noise v(outp,outn) V4 dec 20 1 100Meg
+.control
+noise v(OUTp,OUTn) V4 dec 20 1 2k 1
+setplot noise2
+print inoise_total
+print inoise_total.m.xm1.msky130_fd_pr__pfet_01v8_lvt.1overf
+print inoise_total.m.xm1.msky130_fd_pr__pfet_01v8_lvt.id
+print inoise_total.m.xm3.msky130_fd_pr__nfet_01v8.1overf
+print inoise_total.m.xm5.msky130_fd_pr__nfet_01v8.1overf
+print inoise_total.m.xm7.msky130_fd_pr__pfet_01v8.1overf
+print inoise_total.m.xitail.msky130_fd_pr__pfet_01v8.1overf
+.endc

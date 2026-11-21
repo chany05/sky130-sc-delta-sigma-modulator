@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="440" viewBox="0 0 840 440">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#222222"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666666"/></marker></defs><rect x="1" y="1" width="838" height="438" rx="10" fill="#FFFFFF" stroke="#E2E2E2" stroke-width="1.5"/>
+<line x1="120" y1="330.0" x2="720" y2="330.0" stroke="#EDEDED" stroke-width="1.0"/>
+<line x1="120" y1="195.0" x2="720" y2="195.0" stroke="#EDEDED" stroke-width="1.0"/>
+<line x1="120" y1="60.0" x2="720" y2="60.0" stroke="#EDEDED" stroke-width="1.0"/>
+<line x1="120" y1="330" x2="720" y2="330" stroke="#666666" stroke-width="1.4"/>
+<line x1="120" y1="60" x2="120" y2="330" stroke="#666666" stroke-width="1.4"/>
+<line x1="115" y1="330.0" x2="120" y2="330.0" stroke="#666666" stroke-width="1.4"/>
+<text x="111" y="334.0" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="end" font-weight="normal">100</text>
+<line x1="115" y1="195.0" x2="120" y2="195.0" stroke="#666666" stroke-width="1.4"/>
+<text x="111" y="199.0" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="end" font-weight="normal">1000</text>
+<line x1="115" y1="60.0" x2="120" y2="60.0" stroke="#666666" stroke-width="1.4"/>
+<text x="111" y="64.0" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="end" font-weight="normal">10000</text>
+<text transform="translate(68,195.0) rotate(-90)" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle">Input-referred noise (&#181;g rms, BW = 2 kHz)</text>
+<rect x="145.0" y="101.59" width="110" height="228.41" fill="#BDBDBD"/>
+<rect x="365.0" y="236.59" width="110" height="93.41" fill="#FFFFFF" stroke="#888888" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="585.0" y="256.08" width="110" height="73.92" fill="#0072B2"/>
+<text x="200" y="93.59246279632089" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="middle" font-weight="normal">4.92 mg</text>
+<text x="420" y="228.5924627963209" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal">0.49 mg</text>
+<text x="640" y="248.08142587804377" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="middle" font-weight="bold">0.35 mg</text>
+<text x="200" y="352" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">Sensor (ADXL356C)</text>
+<text x="200" y="370" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">110 &#181;g/&#8730;Hz</text>
+<text x="420" y="352" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">Limit for 20 dB margin</text>
+<text x="420" y="370" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">sensor &#8722; 20 dB</text>
+<text x="640" y="352" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">ADC (this design)</text>
+<text x="640" y="370" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">SNDR = 98.1 dB</text>
+<line x1="718" y1="101.59246279632089" x2="718" y2="254.08142587804377" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<line x1="718" y1="254.08142587804377" x2="718" y2="101.59246279632089" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="728" y="182.83694433718233" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="bold">22.9 dB</text>
+<text x="60" y="410" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="start" font-weight="normal">Full scale = 40 g peak (28.3 g rms, &#8722;6 dBFS). ADC noise is the input-referred value at the target SNDR.</text>
+</svg>

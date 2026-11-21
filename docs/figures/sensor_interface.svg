@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="300" viewBox="0 0 1400 300">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#222222"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666666"/></marker></defs><rect x="1" y="1" width="1398" height="298" rx="10" fill="#FFFFFF" stroke="#E2E2E2" stroke-width="1.5"/>
+<rect x="50" y="105" width="240" height="90" rx="4" fill="#FFFFFF" stroke="#888888" stroke-width="2.6" stroke-dasharray="6 4"/>
+<text x="170" y="138" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="16" fill="#666666" text-anchor="middle" font-weight="normal">MEMS accelerometer</text>
+<text x="170" y="158" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">ADXL356C (reference)</text>
+<text x="170" y="176" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">&#177;40 g &#183; 20 mV/g</text>
+<line x1="290" y1="150" x2="400" y2="150" stroke="#222222" stroke-width="2.34" marker-end="url(#arr)"/>
+<text x="345" y="116" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">0.9 V &#177; 0.8 V</text>
+<text x="345" y="132" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">(single-ended)</text>
+<rect x="400" y="105" width="260" height="90" rx="4" fill="#FFFFFF" stroke="#888888" stroke-width="2.6" stroke-dasharray="6 4"/>
+<text x="530" y="142" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal">AFE (FDA + instrumentation amp)</text>
+<text x="530" y="164" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#666666" text-anchor="middle" font-weight="normal">SE &#8594; diff. conversion &amp; scaling</text>
+<line x1="660" y1="150" x2="770" y2="150" stroke="#222222" stroke-width="2.34" marker-end="url(#arr)"/>
+<text x="715" y="116" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">0.6 V diff. peak</text>
+<text x="715" y="132" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">= &#8722;6 dBFS</text>
+<rect x="770" y="105" width="240" height="90" rx="4" fill="#FFFFFF" stroke="#444444" stroke-width="2.6"/>
+<text x="890" y="140" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="16" fill="#222222" text-anchor="middle" font-weight="normal">&#916;&#931; modulator</text>
+<text x="890" y="160" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#666666" text-anchor="middle" font-weight="normal">2nd-order, 1-bit</text>
+<text x="890" y="178" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">fs = 2.048 MHz, OSR = 512</text>
+<text x="890" y="220" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">FS = &#177;1.2 V diff. (VREFp 1.5 V / VREFn 0.3 V)</text>
+<line x1="1010" y1="150" x2="1110" y2="150" stroke="#222222" stroke-width="2.34" marker-end="url(#arr)"/>
+<text x="1060" y="116" font-family="Cambria Math, STIX Two Math, Times New Roman, serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">v[n]</text>
+<text x="1060" y="132" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">1-bit stream</text>
+<rect x="1110" y="105" width="200" height="90" rx="4" fill="#FFFFFF" stroke="#888888" stroke-width="2.6" stroke-dasharray="6 4"/>
+<text x="1210" y="142" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal">Decimation filter</text>
+<text x="1210" y="164" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">(MATLAB post-proc.)</text>
+<line x1="1310" y1="150" x2="1352" y2="150" stroke="#222222" stroke-width="2.34" marker-end="url(#arr)"/>
+<text x="1374" y="155" font-family="Cambria Math, STIX Two Math, Times New Roman, serif" font-size="16" fill="#222222" text-anchor="middle" font-weight="normal">y[n]</text>
+<text x="170" y="220" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" font-weight="normal">BW = 2 kHz, input range &#177;40 g</text>
+<rect x="80" y="262" width="30" height="18" rx="3" fill="#FFFFFF" stroke="#444444" stroke-width="2"/>
+<text x="120" y="276" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#222222" text-anchor="start" font-weight="normal">Implemented (transistor-level)</text>
+<rect x="388.0" y="262" width="30" height="18" rx="3" fill="#FFFFFF" stroke="#888888" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="428.0" y="276" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" fill="#666666" text-anchor="start" font-weight="normal">Ideal / external (not implemented)</text>
+</svg>

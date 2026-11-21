@@ -1,0 +1,65 @@
+** Bootstrap switch Ron vs input voltage (transient ramp)
+** Testbench schematic: x1 = Bootstrap_Switch (nets: n1, n2, VDD, VSS, clk, clk_bar) with no other sources.
+** The gate node is hierarchical (x1.g). Change x1 below if the instance has another name.
+** Corner: ss in the include lines (worst case for the switch). run_corners.sh swaps ss -> tt / ff and
+** replaces CORNER in the file names.
+** Ron is valid only while clk is high; the MATLAB post-processing keeps the rows with v(clk) > 0.9 V.
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/ss.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/ss/specialized_cells.spice"
+
+.param WN=1 Wp=1 LL=0.15
+.param T=488.28n DV=10m
+
+Vdd  VDD 0 1.8
+Vss  VSS 0 0
+Vck  clk     0 PULSE(0 1.8 {T/2} 0.1n 0.1n {T/2-0.2n} {T})
+Vckb clk_bar 0 PULSE(1.8 0 {T/2} 0.1n 0.1n {T/2-0.2n} {T})
+
+* input: 3 cycles hold, then a slow ramp 0 -> 1.79 V over 40 cycles
+Vin  n1 0 PWL(0 0  {3*T} 0  {43*T} 1.79)
+Vdv  n2 n1 {DV}
+
+.options method=gear reltol=1e-4
+
+.control
+  set wr_singlescale
+  set wr_vecnames
+  option numdgt=8
+
+  * ---- T = -40 C
+  set temp = -40
+  tran 1n 21.5u 0 1n
+  let ron = 0.01 / abs(i(Vdv))
+  let vgs = v(x1.g) - v(n1)
+  wrdata /foss/designs/ron_bs_CORNER_m40.txt ron vgs v(n1) v(clk)
+  echo "Bootstrap  CORNER  T = -40 C  done"
+
+  * ---- T = 27 C
+  set temp = 27
+  tran 1n 21.5u 0 1n
+  let ron = 0.01 / abs(i(Vdv))
+  let vgs = v(x1.g) - v(n1)
+  wrdata /foss/designs/ron_bs_CORNER_27.txt ron vgs v(n1) v(clk)
+  echo "Bootstrap  CORNER  T = 27 C  done"
+
+  * ---- T = 85 C
+  set temp = 85
+  tran 1n 21.5u 0 1n
+  let ron = 0.01 / abs(i(Vdv))
+  let vgs = v(x1.g) - v(n1)
+  wrdata /foss/designs/ron_bs_CORNER_85.txt ron vgs v(n1) v(clk)
+  echo "Bootstrap  CORNER  T = 85 C  done"
+
+  * ---- T = 125 C
+  set temp = 125
+  tran 1n 21.5u 0 1n
+  let ron = 0.01 / abs(i(Vdv))
+  let vgs = v(x1.g) - v(n1)
+  wrdata /foss/designs/ron_bs_CORNER_125.txt ron vgs v(n1) v(clk)
+  echo "Bootstrap  CORNER  T = 125 C  done"
+.endc
+.end

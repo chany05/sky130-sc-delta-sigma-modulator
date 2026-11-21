@@ -1,0 +1,79 @@
+** SC integrator 1 : output common mode vs Vbias (SC CMFB trimming)
+** Same testbench as tb_integrator_dac.spice (gen_clk / gen_stim: set to 0 if the schematic already has those sources).
+** The Vbias source in the schematic is assumed to be named V6 (value 0.52). Change "alter V6" if it has another name.
+** For every Vbias the circuit runs 40 us (about 80 cycles) and the CM is averaged over the last 10 us.
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 27
+
+.param T=488.28n
+.param gen_stim=1
+.param gen_clk=1
+
+.if (gen_stim == 1)
+VinP INPUTp 0 dc 0.9
+VinN INPUTn 0 dc 0.9
+Vdac  DAC   0 PULSE(0 1.8 {3n}       0.1n 0.1n {2*T-0.2n} {4*T})
+Vdacb DAC_b 0 PULSE(0 1.8 {3n+2*T}   0.1n 0.1n {2*T-0.2n} {4*T})
+.endif
+
+.if (gen_clk == 1)
+Vclk1   clk1_nd  0 PULSE(0 1.8 2n      0.1n 0.1n 238n {T})
+Vclk1e  clk1e_nd 0 PULSE(0 1.8 2n      0.1n 0.1n 237n {T})
+Vclk2   clk2_nd  0 PULSE(0 1.8 246.14n 0.1n 0.1n 238n {T})
+Vclk2e  clk2e_nd 0 PULSE(0 1.8 246.14n 0.1n 0.1n 237n {T})
+Vclkch  clkCh_nd 0 PULSE(0 1.8 120n    0.1n 0.1n 488.18n 976.56n)
+.endif
+
+.options method=gear reltol=1e-6 rshunt=1e12
+.save v(OUTp) v(OUTn)
+
+.control
+  option numdgt=6
+
+  * ---- Vbias = 0.42 V
+  alter V6 dc = 0.42
+  tran 5n 40u 0 5n
+  meas tran vp420 avg v(OUTp) from=30u to=40u
+  meas tran vn420 avg v(OUTn) from=30u to=40u
+  let cm420 = (vp420 + vn420) / 2
+  echo "Vbias = 0.42 V  CM = $&cm420 V"
+
+  * ---- Vbias = 0.47 V
+  alter V6 dc = 0.47
+  tran 5n 40u 0 5n
+  meas tran vp470 avg v(OUTp) from=30u to=40u
+  meas tran vn470 avg v(OUTn) from=30u to=40u
+  let cm470 = (vp470 + vn470) / 2
+  echo "Vbias = 0.47 V  CM = $&cm470 V"
+
+  * ---- Vbias = 0.52 V (current value)
+  alter V6 dc = 0.52
+  tran 5n 40u 0 5n
+  meas tran vp520 avg v(OUTp) from=30u to=40u
+  meas tran vn520 avg v(OUTn) from=30u to=40u
+  let cm520 = (vp520 + vn520) / 2
+  echo "Vbias = 0.52 V  CM = $&cm520 V"
+
+  * ---- Vbias = 0.57 V
+  alter V6 dc = 0.57
+  tran 5n 40u 0 5n
+  meas tran vp570 avg v(OUTp) from=30u to=40u
+  meas tran vn570 avg v(OUTn) from=30u to=40u
+  let cm570 = (vp570 + vn570) / 2
+  echo "Vbias = 0.57 V  CM = $&cm570 V"
+
+  * ---- Vbias = 0.62 V
+  alter V6 dc = 0.62
+  tran 5n 40u 0 5n
+  meas tran vp620 avg v(OUTp) from=30u to=40u
+  meas tran vn620 avg v(OUTn) from=30u to=40u
+  let cm620 = (vp620 + vn620) / 2
+  echo "Vbias = 0.62 V  CM = $&cm620 V"
+.endc
+.end

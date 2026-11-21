@@ -1,0 +1,60 @@
+** TG switch Ron vs input voltage (DC sweep, switch kept ON)
+** Testbench schematic: x1 = TG_switch (nets: n1, n2, VDD, VSS, clk, clk_bar) with no other sources.
+** Corner: tt in the include lines. run_corners.sh swaps tt -> ss / ff and replaces CORNER in the file names.
+** Size: set Wn / Wp below (sampling-side TG: 3 / 10, summing node and chopper TG: 4 / 14, LL = 0.35).
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+
+.param Wn=4 Wp=14 LL=0.35 DV=10m
+
+Vdd   VDD     0  1.8
+Vss   VSS     0  0
+Vclk  clk     0  1.8
+Vclkb clk_bar 0  0
+
+* node n1 = swept input, node n2 = n1 + DV (Ron = DV / I)
+Vin  n1 0  0
+Vdv  n2 n1 {DV}
+
+.control
+  set wr_singlescale
+  set wr_vecnames
+  option numdgt=8
+
+  * ---- T = -40 C
+  set temp = -40
+  dc Vin 0 1.79 0.01
+  let ron = 0.01 / abs(i(Vdv))
+  let ronmax = maximum(ron)
+  echo "TG  CORNER  T = -40 C  max Ron = $&ronmax ohm"
+  wrdata /foss/designs/ron_tg_CORNER_m40.txt ron
+
+  * ---- T = 27 C
+  set temp = 27
+  dc Vin 0 1.79 0.01
+  let ron = 0.01 / abs(i(Vdv))
+  let ronmax = maximum(ron)
+  echo "TG  CORNER  T = 27 C  max Ron = $&ronmax ohm"
+  wrdata /foss/designs/ron_tg_CORNER_27.txt ron
+
+  * ---- T = 85 C
+  set temp = 85
+  dc Vin 0 1.79 0.01
+  let ron = 0.01 / abs(i(Vdv))
+  let ronmax = maximum(ron)
+  echo "TG  CORNER  T = 85 C  max Ron = $&ronmax ohm"
+  wrdata /foss/designs/ron_tg_CORNER_85.txt ron
+
+  * ---- T = 125 C
+  set temp = 125
+  dc Vin 0 1.79 0.01
+  let ron = 0.01 / abs(i(Vdv))
+  let ronmax = maximum(ron)
+  echo "TG  CORNER  T = 125 C  max Ron = $&ronmax ohm"
+  wrdata /foss/designs/ron_tg_CORNER_125.txt ron
+.endc
+.end

@@ -1,0 +1,52 @@
+** SC integrator 2 : DAC-only step test
+** Testbench schematic: x1 = SC_Integrator_2 + supplies / biases only
+**   VDD 1.8 V, VSS 0, VCM 0.9 V, VREFp 1.5 V, VREFn 0.3 V, Vbias (Vbias2) 0.59 V, Ibias (Ibias2) 15.4 uA
+** Clocks, inputs and DAC bits are generated in this file (do not place those sources in the schematic).
+** DAC pattern: +1, +1, -1, -1 (period 4 cycles) -> output steps of +-Cd2/Ci2*(VREFp-VREFn) = +-0.436 V (Cd2/Ci2 = 12/33)
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 27
+
+.param T=488.28n
+* set to 0 when the schematic already contains that kind of source (a duplicate source gives a singular matrix)
+.param gen_stim=1
+.param gen_clk=0
+
+.if (gen_stim == 1)
+* ---- input: zero differential input (VCM)
+VinP INPUTp 0 dc 0.9
+VinN INPUTn 0 dc 0.9
+
+* ---- DAC bits (update just after phi1 rising edge, like the DFF)
+Vdac  DAC   0 PULSE(0 1.8 {3n}       0.1n 0.1n {2*T-0.2n} {4*T})
+Vdacb DAC_b 0 PULSE(0 1.8 {3n+2*T}   0.1n 0.1n {2*T-0.2n} {4*T})
+.endif
+
+
+.nodeset v(OUTp)=0.9 v(OUTn)=0.9
+.options method=gear reltol=1e-6 rshunt=1e12
+.save v(OUTp) v(OUTn) v(DAC) v(DAC_b) v(clk1_nd) v(clk2_nd) v(clk2e_nd)
+
+.control
+  set wr_singlescale
+  set wr_vecnames
+  option numdgt=8
+
+  * run 1 : whole waveform (about 20 cycles) -> step size per cycle, output CM
+  tran 1n 10u 0 1n
+  wrdata /foss/designs/integ2_dac.txt v(OUTp) v(OUTn) v(DAC) v(DAC_b) v(clk2_nd)
+
+  * run 2 : fine time step on later cycles -> settling residue at the end of phi2
+  tran 0.2n 4.9u 2.4u 0.2n
+  wrdata /foss/designs/integ2_dac_fine.txt v(OUTp) v(OUTn) v(clk2_nd) v(clk2e_nd)
+ 
+  * run 3 : long run (about 200 cycles) -> output common mode convergence
+  tran 5n 100u 0 5n
+  wrdata /foss/designs/integ2_dac_long.txt v(OUTp) v(OUTn)
+.endc
+.end

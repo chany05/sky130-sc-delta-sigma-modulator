@@ -1,0 +1,73 @@
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+
+.temp -40
+
+.save all
+* --- PFET (LVT) : M1, M2 (1st Stage Input Pair) ---
+.save v(INp) v(INn) v(OUTp) v(OUTn) v(fb_p) v(fb_m)
+* --- PFET LVT: M1, M2 (1st stage input pair) ---
+.save @m.xm1.msky130_fd_pr__pfet_01v8_lvt[vds] @m.xm1.msky130_fd_pr__pfet_01v8_lvt[vgs] @m.xm1.msky130_fd_pr__pfet_01v8_lvt[vdsat] @m.xm1.msky130_fd_pr__pfet_01v8_lvt[gm] @m.xm1.msky130_fd_pr__pfet_01v8_lvt[id] @m.xm1.msky130_fd_pr__pfet_01v8_lvt[gds]
+.save @m.xm2.msky130_fd_pr__pfet_01v8_lvt[vds] @m.xm2.msky130_fd_pr__pfet_01v8_lvt[vgs] @m.xm2.msky130_fd_pr__pfet_01v8_lvt[vdsat] @m.xm2.msky130_fd_pr__pfet_01v8_lvt[gm] @m.xm2.msky130_fd_pr__pfet_01v8_lvt[id] @m.xm2.msky130_fd_pr__pfet_01v8_lvt[gds]
+
+* --- PFET: tail, bias mirror, 2nd stage loads ---
+.save @m.xitail.msky130_fd_pr__pfet_01v8[vds] @m.xitail.msky130_fd_pr__pfet_01v8[vgs] @m.xitail.msky130_fd_pr__pfet_01v8[vdsat] @m.xitail.msky130_fd_pr__pfet_01v8[gm] @m.xitail.msky130_fd_pr__pfet_01v8[id] @m.xitail.msky130_fd_pr__pfet_01v8[gds]
+.save @m.xm9.msky130_fd_pr__pfet_01v8[vds] @m.xm9.msky130_fd_pr__pfet_01v8[vgs] @m.xm9.msky130_fd_pr__pfet_01v8[vdsat] @m.xm9.msky130_fd_pr__pfet_01v8[gm] @m.xm9.msky130_fd_pr__pfet_01v8[id] @m.xm9.msky130_fd_pr__pfet_01v8[gds]
+.save @m.xm7.msky130_fd_pr__pfet_01v8[vds] @m.xm7.msky130_fd_pr__pfet_01v8[vgs] @m.xm7.msky130_fd_pr__pfet_01v8[vdsat] @m.xm7.msky130_fd_pr__pfet_01v8[gm] @m.xm7.msky130_fd_pr__pfet_01v8[id] @m.xm7.msky130_fd_pr__pfet_01v8[gds]
+.save @m.xm8.msky130_fd_pr__pfet_01v8[vds] @m.xm8.msky130_fd_pr__pfet_01v8[vgs] @m.xm8.msky130_fd_pr__pfet_01v8[vdsat] @m.xm8.msky130_fd_pr__pfet_01v8[gm] @m.xm8.msky130_fd_pr__pfet_01v8[id] @m.xm8.msky130_fd_pr__pfet_01v8[gds]
+
+* --- NFET: 1st stage loads ---
+.save @m.xm3.msky130_fd_pr__nfet_01v8[vds] @m.xm3.msky130_fd_pr__nfet_01v8[vgs] @m.xm3.msky130_fd_pr__nfet_01v8[vdsat] @m.xm3.msky130_fd_pr__nfet_01v8[gm] @m.xm3.msky130_fd_pr__nfet_01v8[id] @m.xm3.msky130_fd_pr__nfet_01v8[gds]
+.save @m.xm4.msky130_fd_pr__nfet_01v8[vds] @m.xm4.msky130_fd_pr__nfet_01v8[vgs] @m.xm4.msky130_fd_pr__nfet_01v8[vdsat] @m.xm4.msky130_fd_pr__nfet_01v8[gm] @m.xm4.msky130_fd_pr__nfet_01v8[id] @m.xm4.msky130_fd_pr__nfet_01v8[gds]
+
+* --- NFET: 2nd stage drivers (cgg kept for Cc lower bound check) ---
+.save @m.xm5.msky130_fd_pr__nfet_01v8[vds] @m.xm5.msky130_fd_pr__nfet_01v8[vgs] @m.xm5.msky130_fd_pr__nfet_01v8[vdsat] @m.xm5.msky130_fd_pr__nfet_01v8[gm] @m.xm5.msky130_fd_pr__nfet_01v8[id] @m.xm5.msky130_fd_pr__nfet_01v8[gds] @m.xm5.msky130_fd_pr__nfet_01v8[cgg]
+.save @m.xm6.msky130_fd_pr__nfet_01v8[vds] @m.xm6.msky130_fd_pr__nfet_01v8[vgs] @m.xm6.msky130_fd_pr__nfet_01v8[vdsat] @m.xm6.msky130_fd_pr__nfet_01v8[gm] @m.xm6.msky130_fd_pr__nfet_01v8[id] @m.xm6.msky130_fd_pr__nfet_01v8[gds] @m.xm6.msky130_fd_pr__nfet_01v8[cgg].op
+
+
+.ac dec 100 1 1G
+
+* 2. 제어 및 수식 계산 (반드시 .control ~ .endc 내부에 위치해야 함)
+.control
+* --- DC operating point ---
+op
+write FD_OTA.raw
+print v(INp) v(INn) v(OUTp) v(OUTn)
+print @m.xm1.msky130_fd_pr__pfet_01v8_lvt[id] @m.xm2.msky130_fd_pr__pfet_01v8_lvt[id]
+print @m.xm5.msky130_fd_pr__nfet_01v8[id] @m.xm6.msky130_fd_pr__nfet_01v8[id]
+
+
+* --- AC loop gain ---
+ac dec 100 1 1G
+* fb_p returns to INn and fb_m to INp, so no extra minus sign
+let v_in_diff = v(INp) - v(INn)
+let v_fb_diff = v(fb_p) - v(fb_m)
+let loop_gain = - v_fb_diff / v_in_diff
+
+meas ac dc_loop_gain_db find vdb(loop_gain) at=10
+meas ac f_u_loop when vmag(loop_gain)=1
+meas ac phase_at_ugbw find vp(loop_gain) when vmag(loop_gain)=1
+let pm = 180 + phase_at_ugbw*180/pi
+print dc_loop_gain_db f_u_loop pm
+
+plot vdb(loop_gain)
+plot vp(loop_gain)*180/pi
+
+* --- Noise: input-referred spectrum (wide range) ---
+noise v(OUTp,OUTn) V4 dec 50 1 100Meg
+* noise1: spectral densities [V/sqrt(Hz)], noise2: integrated over 1 Hz-100 MHz
+setplot noise1
+plot inoise_spectrum loglog
+write FD_OTA_noise_spec.raw
+
+* --- Noise: integrated over the signal band only (1 Hz - 2 kHz) ---
+noise v(OUTp,OUTn) V4 dec 50 1 2k
+* noise3: spectrum, noise4: integrated in-band totals
+setplot noise4
+print inoise_total onoise_total
+
+.endc
