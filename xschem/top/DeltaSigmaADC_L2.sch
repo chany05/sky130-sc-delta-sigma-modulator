@@ -20,10 +20,10 @@ N -770 -10 -770 20 {lab=Vbias1}
 N -760 -10 -760 20 {lab=VREFn}
 N -750 -10 -750 20 {lab=VREFp}
 N -740 -10 -740 20 {lab=VCM}
-N -690 -10 -690 20 {lab=clk1_nd}
-N -680 -10 -680 20 {lab=clk2_nd}
-N -670 -10 -670 20 {lab=clk1e_nd}
-N -660 -10 -660 20 {lab=clk2e_nd}
+N -700 -10 -700 20 {lab=clk1_nd}
+N -690 -10 -690 20 {lab=clk2_nd}
+N -680 -10 -680 20 {lab=clk1e_nd}
+N -670 -10 -670 20 {lab=clk2e_nd}
 N -620 -80 -590 -80 {lab=OUTp_1}
 N -620 -70 -590 -70 {lab=OUTn_1}
 N -1000 -240 -1000 -210 {lab=VSS}
@@ -63,17 +63,21 @@ N -730 170 -730 200 {lab=Ibias2}
 N -720 170 -720 200 {lab=VSS}
 N 860 10 860 30 {lab=Ibias2}
 N 400 270 400 290 {lab=clkCh_nd}
-N -650 -10 -650 10 {lab=clkCh_nd}
-N -650 10 -650 20 {lab=clkCh_nd}
+N -660 -10 -660 10 {lab=clkCh_nd}
+N -660 10 -660 20 {lab=clkCh_nd}
 N -880 -150 -820 -150 {lab=#net3}
 N -820 -150 -820 -100 {lab=#net3}
 N -880 -90 -820 -90 {lab=#net4}
-N -970 -90 -940 -90 {lab=#net5}
-N -990 -150 -940 -150 {lab=#net6}
-N -1000 -150 -990 -150 {lab=#net6}
-N -1000 -90 -970 -90 {lab=#net5}
+N -970 -90 -940 -90 {lab=#net4}
+N -990 -150 -940 -150 {lab=#net3}
+N -1000 -150 -990 -150 {lab=#net3}
+N -1000 -90 -970 -90 {lab=#net4}
 N 900 -150 900 -130 {lab=Vbias2}
-C {Analog/SC_Integrator.sym} -720 -70 0 0 {name=x1}
+N -660 0 -650 0 {lab=clkCh_nd}
+N -650 -10 -650 0 {lab=clkCh_nd}
+N -940 -150 -880 -150 {lab=#net3}
+N -940 -90 -880 -90 {lab=#net4}
+C {Analog/SC_Integrator.sym} -720 -80 0 0 {name=x1}
 C {vsource.sym} 300 -100 0 0 {name=V1 value=0.9 savecurrent=false}
 C {lab_wire.sym} 400 -150 0 1 {name=p16 sig_type=std_logic lab=VDD}
 C {vsource.sym} 400 -100 0 0 {name=V2 value=1.8 savecurrent=false}
@@ -98,7 +102,7 @@ C {vsource.sym} 700 -100 0 0 {name=Vrefn value=0.3 savecurrent=false}
 C {gnd.sym} 700 -70 0 0 {name=Vrefp4 lab=0}
 C {lab_wire.sym} 700 -150 0 1 {name=Vrefp5 sig_type=std_logic lab=VREFn}
 C {lab_wire.sym} 810 -150 0 1 {name=p9 sig_type=std_logic lab=Vbias1}
-C {vsource.sym} 810 -100 0 0 {name=V6 value=0.52 savecurrent=false}
+C {vsource.sym} 810 -100 0 0 {name=V6 value=0.62 savecurrent=false}
 C {gnd.sym} 810 -70 0 0 {name=l13 lab=0}
 C {vsource.sym} 300 70 0 1 {name=Vclk1_nd value="PULSE 0 1.8 2n 0.1n 0.1n 238n 488.28n" savecurrent=false}
 C {gnd.sym} 300 100 0 0 {name=l7 lab=0}
@@ -116,10 +120,10 @@ C {lab_wire.sym} -770 10 3 0 {name=p1 sig_type=std_logic lab=Vbias1}
 C {lab_wire.sym} -760 10 3 0 {name=p2 sig_type=std_logic lab=VREFn}
 C {lab_wire.sym} -750 10 3 0 {name=p3 sig_type=std_logic lab=VREFp}
 C {lab_wire.sym} -740 10 3 0 {name=p4 sig_type=std_logic lab=VCM}
-C {lab_wire.sym} -690 10 3 0 {name=p5 sig_type=std_logic lab=clk1_nd}
-C {lab_wire.sym} -680 10 3 0 {name=p6 sig_type=std_logic lab=clk2_nd}
-C {lab_wire.sym} -670 10 3 0 {name=p7 sig_type=std_logic lab=clk1e_nd}
-C {lab_wire.sym} -660 10 3 0 {name=p8 sig_type=std_logic lab=clk2e_nd}
+C {lab_wire.sym} -700 10 3 0 {name=p5 sig_type=std_logic lab=clk1_nd}
+C {lab_wire.sym} -690 10 3 0 {name=p6 sig_type=std_logic lab=clk2_nd}
+C {lab_wire.sym} -680 10 3 0 {name=p7 sig_type=std_logic lab=clk1e_nd}
+C {lab_wire.sym} -670 10 3 0 {name=p8 sig_type=std_logic lab=clk2e_nd}
 C {lab_wire.sym} -600 -80 0 1 {name=p10 sig_type=std_logic lab=OUTp_1}
 C {lab_wire.sym} -600 -70 0 1 {name=p12 sig_type=std_logic lab=OUTn_1}
 C {lab_wire.sym} -1000 -230 1 0 {name=p13 sig_type=std_logic lab=VSS}
@@ -168,11 +172,12 @@ C {gnd.sym} 860 90 0 0 {name=l5 lab=0}
 C {vsource.sym} 400 320 0 0 {name=Vclk_ch_nd value="PULSE 0 1.8 120n 0.1n 0.1n 488.18n 976.56n" savecurrent=false}
 C {gnd.sym} 400 350 0 1 {name=l6 lab=0}
 C {lab_wire.sym} 400 270 0 0 {name=p53 sig_type=std_logic lab=clkCh_nd}
-C {lab_wire.sym} -650 10 3 0 {name=p54 sig_type=std_logic lab=clkCh_nd}
-C {vsource.sym} -910 -150 1 0 {name=V4 value="dc 0 trnoise(63.7u 488.28n 0 0)" savecurrent=false}
-C {vsource.sym} -910 -90 1 0 {name=V5 value="dc 0 trnoise(63.7u 488.28n 0 0)" savecurrent=false}
+C {lab_wire.sym} -660 10 3 0 {name=p54 sig_type=std_logic lab=clkCh_nd}
+C {vsource.sym} -910 -200 1 0 {name=V4 value="dc 0 trnoise(63.7u 488.28n 0 0)" savecurrent=false}
 C {vsource.sym} -1000 -180 2 0 {name=V7 value="dc 0 SIN(0.9  0.3 343.75)" savecurrent=false}
 C {vsource.sym} -1000 -60 0 0 {name=V8 value="dc 0 SIN(0.9  -0.3 343.75)" savecurrent=false}
 C {lab_wire.sym} 900 -150 0 1 {name=p52 sig_type=std_logic lab=Vbias2}
-C {vsource.sym} 900 -100 0 0 {name=V9 value=0.59 savecurrent=false}
+C {vsource.sym} 900 -100 0 0 {name=V9 value=0.69 savecurrent=false}
 C {gnd.sym} 900 -70 0 0 {name=l11 lab=0}
+C {noconn.sym} -940 -200 0 0 {name=l12}
+C {noconn.sym} -880 -200 0 0 {name=l14}

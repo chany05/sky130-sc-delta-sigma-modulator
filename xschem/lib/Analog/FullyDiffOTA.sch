@@ -38,8 +38,6 @@ N -60 210 -50 210 {lab=VCM1}
 N -220 290 100 290 {lab=VSS}
 N 100 240 100 290 {lab=VSS}
 N -100 240 -100 290 {lab=VSS}
-N 180 0 340 0 {lab=OUTn1}
-N -260 0 -100 0 {lab=OUTp1}
 N -530 -250 -300 -250 {lab=VDD}
 N -380 160 -380 290 {lab=VSS}
 N -380 290 -300 290 {lab=VSS}
@@ -63,24 +61,22 @@ N -530 290 -460 290 {lab=VSS}
 N -420 -70 -380 -70 {lab=OUTp}
 N 380 -70 420 -70 {lab=OUTn}
 N -300 -250 -220 -250 {lab=VDD}
-N -340 0 -260 0 {lab=OUTp1}
+N -340 0 -260 0 {lab=ChOUTp1}
 N -300 290 -220 290 {lab=VSS}
-N 100 0 160 0 {lab=OUTn1}
 N 120 290 380 290 {lab=VSS}
 N 380 150 380 160 {lab=VSS}
 N 320 -250 380 -250 {lab=VDD}
 N -300 -70 -290 -70 {lab=#net2}
 N -150 -70 -140 -70 {lab=INp}
 N 140 -70 150 -70 {lab=INn}
-N -230 -70 -220 -70 {lab=OUTp1}
-N -220 -70 -220 0 {lab=OUTp1}
+N -230 -70 -220 -70 {lab=ChOUTp1}
+N -220 -70 -220 0 {lab=ChOUTp1}
 N -380 -70 -360 -70 {lab=OUTp}
 N 290 -70 300 -70 {lab=#net3}
-N 220 -70 230 -70 {lab=OUTn1}
-N 220 -70 220 0 {lab=OUTn1}
+N 220 -70 230 -70 {lab=ChOUTn1}
+N 220 -70 220 0 {lab=ChOUTn1}
 N 360 -70 380 -70 {lab=OUTn}
 N 0 -250 20 -250 {lab=VDD}
-N 160 0 180 0 {lab=OUTn1}
 N 100 290 120 290 {lab=VSS}
 N -160 -200 -40 -200 {lab=Ibias}
 N -210 -200 -200 -200 {lab=VDD}
@@ -120,6 +116,21 @@ N 360 -120 360 -70 {lab=OUTn}
 N 300 -120 300 -70 {lab=#net3}
 N -300 -120 -300 -70 {lab=#net2}
 N -360 -120 -360 -70 {lab=OUTp}
+N 620 -330 620 -310 {lab=VDD}
+N 660 -330 660 -310 {lab=clkCh2}
+N 620 -170 620 -150 {lab=VSS}
+N 660 -170 660 -150 {lab=clkCh2_b}
+N 860 180 880 180 {lab=VSS}
+N 860 200 880 200 {lab=VDD}
+N 860 220 880 220 {lab=clkCh2_nd}
+N 860 240 880 240 {lab=clkCh2}
+N 860 260 880 260 {lab=clkCh2_b}
+N 780 130 780 150 {lab=VDD}
+N -260 -0 -220 0 {lab=ChOUTp1}
+N -220 -0 -190 0 {lab=ChOUTp1}
+N -120 0 -100 -0 {lab=OUTp1}
+N 100 0 120 -0 {lab=OUTn1}
+N 200 0 340 -0 {lab=ChOUTn1}
 C {iopin.sym} -460 -190 0 1 {name=p11 lab=CMFB}
 C {ipin.sym} -150 -70 0 0 {name=p1 lab=INp}
 C {iopin.sym} -530 -250 0 1 {name=p2 lab=VDD}
@@ -245,8 +256,8 @@ spiceprefix=X
 }
 C {iopin.sym} -200 -150 1 0 {name=p20 lab=Ibias}
 C {lab_wire.sym} 0 210 0 1 {name=p40 sig_type=std_logic lab=VCM1}
-C {lab_wire.sym} 160 0 0 1 {name=p41 sig_type=std_logic lab=OUTn1}
-C {lab_wire.sym} -190 0 0 1 {name=p42 sig_type=std_logic lab=OUTp1}
+C {lab_wire.sym} 120 0 1 1 {name=p41 sig_type=std_logic lab=OUTn1}
+C {lab_wire.sym} -120 0 3 0 {name=p42 sig_type=std_logic lab=OUTp1}
 C {sky130_fd_pr/res_xhigh_po_0p35.sym} -50 0 1 0 {name=R9
 L=53
 model=res_xhigh_po_0p35
@@ -280,3 +291,22 @@ C {sky130_fd_pr/cap_mim_m3_1.sym} 330 -120 3 1 {name=C7 model=cap_mim_m3_1 W=12 
 C {sky130_fd_pr/cap_mim_m3_2.sym} 330 -70 3 1 {name=C8 model=cap_mim_m3_2 W=12 L=12 MF=2 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_1.sym} -330 -120 3 1 {name=C1 model=cap_mim_m3_1 W=12 L=12 MF=2 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_2.sym} -330 -70 3 1 {name=C2 model=cap_mim_m3_2 W=12 L=12 MF=2 spiceprefix=X}
+C {lab_wire.sym} 620 -320 0 1 {name=p15 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 620 -160 2 0 {name=p16 sig_type=std_logic lab=VSS}
+C {Analog/chopper.sym} 640 -240 0 0 {name=x36}
+C {iopin.sym} 870 -5 0 0 {name=p58 lab=clkCh2_nd}
+C {lab_wire.sym} 880 200 0 1 {name=p59 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 880 220 0 1 {name=p88 sig_type=std_logic lab=clkCh2_nd}
+C {lab_wire.sym} 880 240 0 1 {name=p121 sig_type=std_logic lab=clkCh2}
+C {lab_wire.sym} 880 260 0 1 {name=p157 sig_type=std_logic lab=clkCh2_b}
+C {Analog/NonOverlappingClk.sym} 710 220 0 0 {name=x33}
+C {lab_wire.sym} 880 180 0 1 {name=p158 sig_type=std_logic lab=VSS}
+C {lab_wire.sym} 780 130 0 1 {name=p170 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 660 -160 2 0 {name=p12 sig_type=std_logic lab=clkCh2_b}
+C {lab_wire.sym} 660 -320 0 1 {name=p13 sig_type=std_logic lab=clkCh2}
+C {lab_wire.sym} 200 0 3 0 {name=p14 sig_type=std_logic lab=ChOUTn1}
+C {lab_wire.sym} -190 0 1 1 {name=p18 sig_type=std_logic lab=ChOUTp1}
+C {lab_wire.sym} 680 -190 1 1 {name=p17 sig_type=std_logic lab=ChOUTp1}
+C {lab_wire.sym} 680 -290 1 1 {name=p19 sig_type=std_logic lab=ChOUTn1}
+C {lab_wire.sym} 600 -290 3 0 {name=p21 sig_type=std_logic lab=OUTn1}
+C {lab_wire.sym} 600 -190 3 0 {name=p22 sig_type=std_logic lab=OUTp1}

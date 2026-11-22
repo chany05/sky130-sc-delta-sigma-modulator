@@ -42,10 +42,10 @@ N -555 -260 -555 -230 {lab=VSS}
 N -495 -330 -495 -310 {lab=clk2e}
 N -465 -280 -415 -280 {lab=INn}
 N -460 -180 -420 -180 {lab=INn}
-N -460 -140 -460 -50 {lab=INn}
+N -580 -140 -580 -50 {lab=INn}
 N -320 -140 -320 -60 {lab=OUTp}
-N -460 50 -460 140 {lab=INp}
-N -460 140 -460 150 {lab=INp}
+N -580 50 -580 140 {lab=INp}
+N -580 140 -580 150 {lab=INp}
 N -320 60 -320 150 {lab=OUTn}
 N -490 -50 -470 -50 {lab=INn}
 N -490 50 -470 50 {lab=INp}
@@ -129,9 +129,9 @@ N -935 -80 -915 -80 {lab=#net3}
 N -635 -210 -615 -210 {lab=VSS}
 N -360 -180 -320 -180 {lab=OUTp}
 N -320 -180 -320 -140 {lab=OUTp}
-N -460 -180 -460 -140 {lab=INn}
+N -580 -180 -580 -140 {lab=INn}
 N -460 190 -420 190 {lab=INp}
-N -460 150 -460 190 {lab=INp}
+N -580 150 -580 190 {lab=INp}
 N -320 150 -320 190 {lab=OUTn}
 N -360 190 -320 190 {lab=OUTn}
 N -885 -530 -885 -450 {lab=#net2}
@@ -266,12 +266,18 @@ N 35 -110 35 110 {lab=CMFB}
 N 35 0 95 0 {lab=CMFB}
 N -25 110 35 110 {lab=CMFB}
 N -25 -110 35 -110 {lab=CMFB}
+N -590 -50 -570 -50 {lab=INn}
+N -590 50 -570 50 {lab=INp}
+N -580 -180 -460 -180 {lab=INn}
+N -580 190 -460 190 {lab=INp}
+N -570 -50 -490 -50 {lab=INn}
+N -570 50 -490 50 {lab=INp}
 C {lab_wire.sym} -380 110 0 1 {name=p27 sig_type=std_logic lab=VSS}
 C {lab_wire.sym} -380 -90 0 1 {name=p28 sig_type=std_logic lab=VDD}
 C {lab_wire.sym} -410 130 0 1 {name=p29 sig_type=std_logic lab=Ibias}
 C {lab_wire.sym} -220 0 0 1 {name=p30 sig_type=std_logic lab=CMFB}
-C {lab_wire.sym} -490 50 3 0 {name=p2 sig_type=std_logic lab=INp}
-C {lab_wire.sym} -490 -50 3 1 {name=p3 sig_type=std_logic lab=INn}
+C {lab_wire.sym} -590 50 3 0 {name=p2 sig_type=std_logic lab=INp}
+C {lab_wire.sym} -590 -50 3 1 {name=p3 sig_type=std_logic lab=INn}
 C {lab_wire.sym} -310 -60 0 1 {name=p4 sig_type=std_logic lab=OUTp}
 C {lab_wire.sym} -310 60 0 1 {name=p5 sig_type=std_logic lab=OUTn}
 C {lab_wire.sym} -1025 -440 0 0 {name=p6 sig_type=std_logic lab=VSS}

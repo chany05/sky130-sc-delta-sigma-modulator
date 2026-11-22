@@ -9,8 +9,8 @@ N -260 20 -220 20 {lab=CMFB}
 N -410 110 -410 130 {lab=VSS}
 N -410 -90 -410 -70 {lab=VDD}
 N -440 130 -440 150 {lab=Ibias}
-N -360 -40 -340 -40 {lab=OTA_OUTp}
-N -360 80 -340 80 {lab=OTA_OUTn}
+N -360 -40 -340 -40 {lab=OUTp}
+N -360 80 -340 80 {lab=OUTn}
 N -910 -460 -860 -460 {lab=#net1}
 N -860 -440 -860 -370 {lab=#net1}
 N -860 -460 -860 -440 {lab=#net1}
@@ -40,8 +40,8 @@ N -550 -250 -500 -250 {lab=INn}
 N -490 -160 -450 -160 {lab=INn}
 N -110 -110 -110 -30 {lab=OUTp}
 N -500 70 -480 70 {lab=#net4}
-N -340 -40 -320 -40 {lab=OTA_OUTp}
-N -340 80 -320 80 {lab=OTA_OUTn}
+N -340 -40 -320 -40 {lab=OUTp}
+N -340 80 -320 80 {lab=OUTn}
 N -910 90 -860 90 {lab=#net5}
 N -860 110 -860 180 {lab=#net5}
 N -860 90 -860 110 {lab=#net5}
@@ -66,23 +66,6 @@ N -750 300 -660 300 {lab=#net5}
 N -640 320 -640 350 {lab=VSS}
 N -580 250 -580 270 {lab=clk2e}
 N -550 300 -500 300 {lab=INp}
-N 1135 -285 1155 -285 {lab=clkDn_b}
-N 975 -305 1015 -305 {lab=DAC_b}
-N 995 -265 1015 -265 {lab=clk2_nd}
-N 995 -265 995 -245 {lab=clk2_nd}
-N 1235 -285 1265 -285 {lab=clkDn}
-N 975 -185 1015 -185 {lab=DAC}
-N 995 -145 1015 -145 {lab=clk2_nd}
-N 995 -145 995 -125 {lab=clk2_nd}
-N 1235 -165 1265 -165 {lab=clkDp}
-N 975 105 1015 105 {lab=VDD}
-N 995 145 1015 145 {lab=clk1_nd}
-N 995 145 995 165 {lab=clk1_nd}
-N 1235 125 1265 125 {lab=clk1}
-N 975 225 1015 225 {lab=VDD}
-N 995 265 1015 265 {lab=clk2_nd}
-N 995 265 995 285 {lab=clk2_nd}
-N 1235 245 1265 245 {lab=clk2}
 N -1160 -250 -1110 -250 {lab=#net3}
 N -1110 -250 -1110 -120 {lab=#net3}
 N -1160 -120 -1110 -120 {lab=#net3}
@@ -96,19 +79,6 @@ N -1160 300 -1110 300 {lab=#net7}
 N -1110 300 -1110 430 {lab=#net7}
 N -1160 430 -1110 430 {lab=#net7}
 N -1110 370 -1020 370 {lab=#net7}
-N 1485 105 1525 105 {lab=VDD}
-N 1505 145 1525 145 {lab=clk1e_nd}
-N 1505 145 1505 165 {lab=clk1e_nd}
-N 1745 125 1775 125 {lab=clk1e}
-N 1485 225 1525 225 {lab=VDD}
-N 1505 265 1525 265 {lab=clk2e_nd}
-N 1505 265 1505 285 {lab=clk2e_nd}
-N 1745 245 1775 245 {lab=clk2e}
-N 1135 -165 1155 -165 {lab=clkDp_b}
-N 1135 125 1155 125 {lab=clk1_b}
-N 1135 245 1155 245 {lab=clk2_b}
-N 1645 125 1665 125 {lab=clk1e_b}
-N 1645 245 1665 245 {lab=clk2e_b}
 N -1000 -460 -1000 -330 {lab=#net2}
 N -1020 -330 -1000 -330 {lab=#net2}
 N -1000 90 -1000 220 {lab=#net6}
@@ -134,10 +104,6 @@ N -450 -200 -450 -120 {lab=INn}
 N -390 -200 -390 -120 {lab=OUTp}
 N -450 170 -450 250 {lab=INp}
 N -390 170 -390 250 {lab=OUTn}
-N 1145 75 1145 125 {lab=clk1_b}
-N 1145 195 1145 245 {lab=clk2_b}
-N 1655 75 1655 125 {lab=clk1e_b}
-N 1655 195 1655 245 {lab=clk2e_b}
 N -1050 -440 -1050 -420 {lab=clk1_b}
 N -1050 -420 -1050 -410 {lab=clk1_b}
 N -1110 -510 -1110 -490 {lab=VDD}
@@ -155,8 +121,6 @@ N -1240 -150 -1240 -120 {lab=VSS}
 N -1240 -80 -1240 -60 {lab=clkDp}
 N -1300 -120 -1270 -120 {lab=VREFn}
 N -1210 -120 -1160 -120 {lab=#net3}
-N 1145 -345 1145 -285 {lab=clkDn_b}
-N 1145 -225 1145 -165 {lab=clkDp_b}
 N -790 -180 -770 -180 {lab=VDD}
 N -720 -120 -700 -120 {lab=clk1e_b}
 N -790 430 -770 430 {lab=clk1e}
@@ -176,24 +140,24 @@ N -1050 240 -1050 270 {lab=clk2_b}
 N -1050 520 -1050 550 {lab=clk1_b}
 N -580 -230 -580 -200 {lab=clk2e_b}
 N -580 320 -580 350 {lab=clk2e_b}
-N 20 -100 40 -100 {lab=OTA_OUTp}
-N 20 120 40 120 {lab=OTA_OUTn}
-N 40 120 160 120 {lab=OTA_OUTn}
-N 160 -130 160 -70 {lab=OTA_OUTp}
+N 20 -100 40 -100 {lab=OUTp}
+N 20 120 40 120 {lab=OUTn}
+N 40 120 160 120 {lab=OUTn}
+N 160 -130 160 -70 {lab=OUTp}
 N 220 -130 220 -120 {lab=CMFB}
 N 220 -120 220 -80 {lab=CMFB}
 N 220 -80 220 -70 {lab=CMFB}
-N 160 90 160 150 {lab=OTA_OUTn}
+N 160 90 160 150 {lab=OUTn}
 N 220 90 220 100 {lab=CMFB}
 N 220 100 220 140 {lab=CMFB}
 N 220 140 220 150 {lab=CMFB}
-N 40 -100 160 -100 {lab=OTA_OUTp}
+N 40 -100 160 -100 {lab=OUTp}
 N 20 510 60 510 {lab=VCM}
 N 50 260 70 260 {lab=clk1}
 N 120 200 140 200 {lab=VSS}
 N 50 200 70 200 {lab=VDD}
 N 120 260 140 260 {lab=clk1_b}
-N 100 120 100 180 {lab=OTA_OUTn}
+N 100 120 100 180 {lab=OUTn}
 N 310 260 330 260 {lab=clk1}
 N 240 260 260 260 {lab=clk1_b}
 N 280 120 280 180 {lab=CMFB}
@@ -224,7 +188,7 @@ N 50 -240 70 -240 {lab=clk1}
 N 120 -180 140 -180 {lab=VSS}
 N 50 -180 70 -180 {lab=VDD}
 N 120 -240 140 -240 {lab=clk1_b}
-N 100 -160 100 -100 {lab=OTA_OUTp}
+N 100 -160 100 -100 {lab=OUTp}
 N 310 -240 330 -240 {lab=clk1}
 N 240 -240 260 -240 {lab=clk1_b}
 N 280 -160 280 -100 {lab=CMFB}
@@ -262,37 +226,75 @@ N -600 70 -600 210 {lab=INp}
 N -600 210 -490 210 {lab=INp}
 N -630 70 -600 70 {lab=INp}
 N -630 -30 -600 -30 {lab=INn}
-N -320 -40 -200 -40 {lab=OTA_OUTp}
-N -200 -40 -200 -30 {lab=OTA_OUTp}
-N -320 80 -200 80 {lab=OTA_OUTn}
-N -200 70 -200 80 {lab=OTA_OUTn}
+N -320 -40 -200 -40 {lab=OUTp}
+N -200 -40 -200 -30 {lab=OUTp}
+N -320 80 -200 80 {lab=OUTn}
+N -200 70 -200 80 {lab=OUTn}
 N -120 -30 -100 -30 {lab=OUTp}
 N -120 70 -100 70 {lab=OUTn}
 N -560 -70 -560 -50 {lab=VDD}
-N -520 -70 -520 -50 {lab=clkCh}
+N -520 -70 -520 -50 {lab=clkCh1}
 N -560 90 -560 110 {lab=VSS}
-N -520 90 -520 110 {lab=clkCh_b}
-N -180 -70 -180 -50 {lab=VDD}
-N -140 -70 -140 -50 {lab=clkCh}
-N -180 90 -180 110 {lab=VSS}
-N -140 90 -140 110 {lab=clkCh_b}
-N 1485 -15 1525 -15 {lab=VDD}
-N 1505 25 1525 25 {lab=clkCh_nd}
-N 1505 25 1505 45 {lab=clkCh_nd}
-N 1745 5 1775 5 {lab=clkCh}
-N 1645 5 1665 5 {lab=clkCh_b}
-N 1655 -45 1655 5 {lab=clkCh_b}
+N -520 90 -520 110 {lab=clkCh1_b}
 N -500 -50 -500 -30 {lab=#net12}
-N -500 -110 -480 -110 {lab=#net13}
-N -480 -110 -480 -30 {lab=#net13}
+N -500 -110 -480 -110 {lab=#net12}
 N -110 -160 -110 -150 {lab=OUTp}
 N -350 -160 -110 -160 {lab=OUTp}
 N -110 70 -110 210 {lab=OUTn}
 N -350 210 -110 210 {lab=OUTn}
+N 1240 200 1260 200 {lab=VSS}
+N 1240 220 1260 220 {lab=VDD}
+N 1240 240 1260 240 {lab=clkCh1_nd}
+N 1240 260 1260 260 {lab=clkCh1}
+N 1240 280 1260 280 {lab=clkCh1_b}
+N 1160 150 1160 170 {lab=VDD}
+N 1745 185 1765 185 {lab=clkDn_b}
+N 1585 165 1625 165 {lab=DAC_b}
+N 1605 205 1625 205 {lab=clk2_nd}
+N 1605 205 1605 225 {lab=clk2_nd}
+N 1845 185 1875 185 {lab=clkDn}
+N 1585 285 1625 285 {lab=DAC}
+N 1605 325 1625 325 {lab=clk2_nd}
+N 1605 325 1605 345 {lab=clk2_nd}
+N 1845 305 1875 305 {lab=clkDp}
+N 1745 305 1765 305 {lab=clkDp_b}
+N 1755 125 1755 185 {lab=clkDn_b}
+N 1755 245 1755 305 {lab=clkDp_b}
+N 1585 435 1625 435 {lab=VDD}
+N 1605 475 1625 475 {lab=clk1_nd}
+N 1605 475 1605 495 {lab=clk1_nd}
+N 1845 455 1875 455 {lab=clk1}
+N 1585 555 1625 555 {lab=VDD}
+N 1605 595 1625 595 {lab=clk2_nd}
+N 1605 595 1605 615 {lab=clk2_nd}
+N 1845 575 1875 575 {lab=clk2}
+N 2095 435 2135 435 {lab=VDD}
+N 2115 475 2135 475 {lab=clk1e_nd}
+N 2115 475 2115 495 {lab=clk1e_nd}
+N 2355 455 2385 455 {lab=clk1e}
+N 2095 555 2135 555 {lab=VDD}
+N 2115 595 2135 595 {lab=clk2e_nd}
+N 2115 595 2115 615 {lab=clk2e_nd}
+N 2355 575 2385 575 {lab=clk2e}
+N 1745 455 1765 455 {lab=clk1_b}
+N 1745 575 1765 575 {lab=clk2_b}
+N 2255 455 2275 455 {lab=clk1e_b}
+N 2255 575 2275 575 {lab=clk2e_b}
+N 1755 405 1755 455 {lab=clk1_b}
+N 1755 525 1755 575 {lab=clk2_b}
+N 2265 405 2265 455 {lab=clk1e_b}
+N 2265 525 2265 575 {lab=clk2e_b}
+N -200 -30 -120 -30 {lab=OUTp}
+N -200 70 -120 70 {lab=OUTn}
+N -100 -30 -40 -30 {lab=OUTp}
+N -100 70 -40 70 {lab=OUTn}
+N -430 -100 -430 -80 {lab=clkCh2_nd}
+N -480 -110 -480 -30 {lab=#net12}
+N -500 -110 -500 -50 {lab=#net12}
 C {lab_wire.sym} -410 130 0 1 {name=p27 sig_type=std_logic lab=VSS}
 C {lab_wire.sym} -410 -70 0 1 {name=p28 sig_type=std_logic lab=VDD}
 C {lab_wire.sym} -440 150 0 1 {name=p29 sig_type=std_logic lab=Ibias}
-C {lab_wire.sym} -250 20 0 1 {name=p30 sig_type=std_logic lab=CMFB}
+C {lab_wire.sym} -260 20 0 1 {name=p30 sig_type=std_logic lab=CMFB}
 C {lab_wire.sym} -630 70 3 0 {name=p2 sig_type=std_logic lab=INp}
 C {lab_wire.sym} -630 -30 3 1 {name=p3 sig_type=std_logic lab=INn}
 C {lab_wire.sym} -100 -30 0 1 {name=p4 sig_type=std_logic lab=OUTp}
@@ -312,7 +314,6 @@ C {lab_wire.sym} -740 -80 1 1 {name=p53 sig_type=std_logic lab=VCM}
 C {lab_wire.sym} -640 -200 0 0 {name=p54 sig_type=std_logic lab=VSS}
 C {lab_wire.sym} -580 -300 2 1 {name=p55 sig_type=std_logic lab=clk2e}
 C {lab_wire.sym} -500 -250 3 1 {name=p56 sig_type=std_logic lab=INn}
-C {Analog/FullyDiffOTA.sym} -410 20 0 0 {name=x1}
 C {lab_wire.sym} -1110 140 0 0 {name=p31 sig_type=std_logic lab=VSS}
 C {lab_wire.sym} -1050 40 2 1 {name=p40 sig_type=std_logic lab=clk1}
 C {lab_wire.sym} -1140 90 2 1 {name=p41 sig_type=std_logic lab=INPUTp}
@@ -325,48 +326,14 @@ C {lab_wire.sym} -1140 500 2 1 {name=p63 sig_type=std_logic lab=VCM}
 C {lab_wire.sym} -640 350 0 0 {name=p67 sig_type=std_logic lab=VSS}
 C {lab_wire.sym} -580 250 2 1 {name=p68 sig_type=std_logic lab=clk2e}
 C {lab_wire.sym} -500 300 3 1 {name=p69 sig_type=std_logic lab=INp}
-C {sky130_stdcells/nand2_1.sym} 1075 -285 0 0 {name=x14 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/inv_1.sym} 1195 -285 0 0 {name=x15 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {lab_wire.sym} 995 -245 0 0 {name=p23 sig_type=std_logic lab=clk2_nd}
-C {lab_wire.sym} 995 -305 0 0 {name=p24 sig_type=std_logic lab=DAC_b}
-C {lab_wire.sym} 995 -125 0 0 {name=p25 sig_type=std_logic lab=clk2_nd}
-C {lab_wire.sym} 995 -185 0 0 {name=p26 sig_type=std_logic lab=DAC}
-C {lab_wire.sym} 1255 -285 2 0 {name=p32 sig_type=std_logic lab=clkDn}
-C {lab_wire.sym} 1255 -165 2 0 {name=p33 sig_type=std_logic lab=clkDp}
-C {lab_wire.sym} 995 165 0 0 {name=p34 sig_type=std_logic lab=clk1_nd}
-C {lab_wire.sym} 995 105 0 0 {name=p35 sig_type=std_logic lab=VDD}
-C {lab_wire.sym} 995 285 0 0 {name=p36 sig_type=std_logic lab=clk2_nd}
-C {lab_wire.sym} 995 225 0 0 {name=p37 sig_type=std_logic lab=VDD}
-C {lab_wire.sym} 1255 125 2 0 {name=p38 sig_type=std_logic lab=clk1}
-C {lab_wire.sym} 1255 245 2 0 {name=p39 sig_type=std_logic lab=clk2}
 C {lab_wire.sym} -1280 300 2 1 {name=p75 sig_type=std_logic lab=VREFp}
 C {lab_wire.sym} -1240 400 3 1 {name=p76 sig_type=std_logic lab=VSS}
 C {lab_wire.sym} -1240 490 0 1 {name=p77 sig_type=std_logic lab=clkDn}
 C {lab_wire.sym} -1280 430 2 1 {name=p78 sig_type=std_logic lab=VREFn}
-C {lab_wire.sym} 1505 165 0 0 {name=p60 sig_type=std_logic lab=clk1e_nd}
-C {lab_wire.sym} 1505 105 0 0 {name=p79 sig_type=std_logic lab=VDD}
-C {lab_wire.sym} 1505 285 0 0 {name=p80 sig_type=std_logic lab=clk2e_nd}
-C {lab_wire.sym} 1505 225 0 0 {name=p81 sig_type=std_logic lab=VDD}
-C {lab_wire.sym} 1765 125 2 0 {name=p82 sig_type=std_logic lab=clk1e}
-C {lab_wire.sym} 1765 245 2 0 {name=p83 sig_type=std_logic lab=clk2e}
-C {sky130_stdcells/nand2_1.sym} 1075 -165 0 0 {name=x16 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/inv_1.sym} 1195 -165 0 0 {name=x17 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/nand2_1.sym} 1075 125 0 0 {name=x18 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/inv_1.sym} 1195 125 0 0 {name=x19 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/nand2_1.sym} 1075 245 0 0 {name=x20 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/inv_1.sym} 1195 245 0 0 {name=x21 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/nand2_1.sym} 1585 125 0 0 {name=x10 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/inv_1.sym} 1705 125 0 0 {name=x25 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/nand2_1.sym} 1585 245 0 0 {name=x26 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/inv_1.sym} 1705 245 0 0 {name=x27 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
 C {sky130_fd_pr/cap_mim_m3_2.sym} -940 -420 1 1 {name=C16 model=cap_mim_m3_2 W=15 L=10 MF=6 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_1.sym} -940 -500 1 0 {name=C17 model=cap_mim_m3_1 W=19 L=10 MF=6 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_2.sym} -420 -120 1 1 {name=C2 model=cap_mim_m3_2 W=15 L=10 MF=20 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_1.sym} -420 -200 1 0 {name=C3 model=cap_mim_m3_1 W=19 L=10 MF=20 spiceprefix=X}
-C {lab_wire.sym} 1145 85 0 1 {name=p89 sig_type=std_logic lab=clk1_b}
-C {lab_wire.sym} 1145 205 0 1 {name=p90 sig_type=std_logic lab=clk2_b}
-C {lab_wire.sym} 1655 85 0 1 {name=p92 sig_type=std_logic lab=clk1e_b}
-C {lab_wire.sym} 1655 205 0 1 {name=p93 sig_type=std_logic lab=clk2e_b}
 C {lab_wire.sym} -1050 -410 0 1 {name=p91 sig_type=std_logic lab=clk1_b}
 C {lab_wire.sym} -1110 -500 0 0 {name=p94 sig_type=std_logic lab=VDD}
 C {lab_wire.sym} -1110 50 0 0 {name=p95 sig_type=std_logic lab=VDD}
@@ -432,8 +399,6 @@ sa=0 sb=0 sd=0
 model=nfet_01v8
 spiceprefix=X
 }
-C {lab_wire.sym} 1145 -215 0 1 {name=p70 sig_type=std_logic lab=clkDp_b}
-C {lab_wire.sym} 1145 -335 0 1 {name=p71 sig_type=std_logic lab=clkDn_b}
 C {lab_wire.sym} -1240 -300 0 1 {name=p20 sig_type=std_logic lab=clkDn_b}
 C {lab_wire.sym} -1240 250 0 1 {name=p72 sig_type=std_logic lab=clkDp_b}
 C {Analog/Bootstrap_Switch.sym} -1080 -460 0 0 {name=x4 Wn=1.0 Wp=1.0 LL=0.15}
@@ -466,10 +431,8 @@ C {Analog/TG_switch.sym} -610 300 0 0 {name=x13 Wn=4.0 Wp=14.0 LL=0.35}
 C {lab_wire.sym} -580 -200 0 1 {name=p114 sig_type=std_logic lab=clk2e_b}
 C {lab_wire.sym} -580 350 0 1 {name=p115 sig_type=std_logic lab=clk2e_b}
 C {lab_wire.sym} -1240 310 1 1 {name=p116 sig_type=std_logic lab=VDD}
-C {lab_wire.sym} 20 -100 0 0 {name=p108 sig_type=std_logic lab=OTA_OUTp}
 C {lab_wire.sym} 20 510 0 0 {name=p117 sig_type=std_logic lab=VCM}
 C {lab_wire.sym} 320 10 0 1 {name=p118 sig_type=std_logic lab=CMFB}
-C {lab_wire.sym} 20 120 2 1 {name=p120 sig_type=std_logic lab=OTA_OUTn}
 C {sky130_fd_pr/cap_mim_m3_2.sym} 190 -130 1 0 {name=C14 model=cap_mim_m3_2 W=15 L=10 MF=1 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 190 -70 1 1 {name=C15 model=cap_mim_m3_1 W=10 L=10 MF=1 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_2.sym} 190 90 1 0 {name=C18 model=cap_mim_m3_2 W=15 L=10 MF=1 spiceprefix=X}
@@ -551,26 +514,12 @@ C {opin.sym} 1620 -305 0 0 {name=p9 lab=OUTp
 }
 C {opin.sym} 1620 -275 0 0 {name=p11 lab=OUTn
 }
-C {Analog/chopper.sym} -540 20 0 0 {name=x32}
-C {Analog/chopper.sym} -160 20 0 0 {name=x33}
-C {lab_wire.sym} -260 -40 0 0 {name=p10 sig_type=std_logic lab=OTA_OUTp}
-C {lab_wire.sym} -260 80 2 1 {name=p12 sig_type=std_logic lab=OTA_OUTn}
 C {lab_wire.sym} -560 -60 0 1 {name=p15 sig_type=std_logic lab=VDD}
 C {lab_wire.sym} -560 100 2 0 {name=p16 sig_type=std_logic lab=VSS}
-C {lab_wire.sym} -180 -60 0 1 {name=p17 sig_type=std_logic lab=VDD}
-C {lab_wire.sym} -180 100 2 0 {name=p18 sig_type=std_logic lab=VSS}
-C {iopin.sym} 1740 -185 0 0 {name=p19 lab=clkCh_nd}
-C {lab_wire.sym} 1505 45 0 0 {name=p21 sig_type=std_logic lab=clkCh_nd}
-C {lab_wire.sym} 1505 -15 0 0 {name=p22 sig_type=std_logic lab=VDD}
-C {lab_wire.sym} 1765 5 2 0 {name=p58 sig_type=std_logic lab=clkCh}
-C {sky130_stdcells/nand2_1.sym} 1585 5 0 0 {name=x34 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {sky130_stdcells/inv_1.sym} 1705 5 0 0 {name=x35 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
-C {lab_wire.sym} 1655 -35 0 1 {name=p59 sig_type=std_logic lab=clkCh_b}
-C {lab_wire.sym} -520 -60 0 1 {name=p84 sig_type=std_logic lab=clkCh}
-C {lab_wire.sym} -140 -60 0 1 {name=p85 sig_type=std_logic lab=clkCh}
-C {lab_wire.sym} -520 100 2 0 {name=p86 sig_type=std_logic lab=clkCh_b}
-C {lab_wire.sym} -140 100 2 0 {name=p87 sig_type=std_logic lab=clkCh_b}
-C {vsource.sym} -500 -80 0 0 {name=Vflicker value="dc 0 trnoise(0 1u 0.85 66.4u)" savecurrent=false}
+C {iopin.sym} 1740 -185 0 0 {name=p19 lab=clkCh1_nd}
+C {lab_wire.sym} -520 -60 0 1 {name=p84 sig_type=std_logic lab=clkCh1}
+C {lab_wire.sym} -520 100 2 0 {name=p86 sig_type=std_logic lab=clkCh1_b}
+C {vsource.sym} -250 -220 0 0 {name=Vflicker value="dc 0 trnoise(0 1u 0.85 66.4u)" savecurrent=false}
 C {sky130_fd_pr/cap_mim_m3_2.sym} -940 -140 1 1 {name=C1 model=cap_mim_m3_2 W=15 L=10 MF=6 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_1.sym} -940 -220 1 0 {name=C4 model=cap_mim_m3_1 W=19 L=10 MF=6 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_2.sym} -940 130 1 1 {name=C5 model=cap_mim_m3_2 W=15 L=10 MF=6 spiceprefix=X}
@@ -579,3 +528,54 @@ C {sky130_fd_pr/cap_mim_m3_2.sym} -940 410 1 1 {name=C7 model=cap_mim_m3_2 W=15 
 C {sky130_fd_pr/cap_mim_m3_1.sym} -940 330 1 0 {name=C8 model=cap_mim_m3_1 W=19 L=10 MF=6 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_2.sym} -420 250 1 1 {name=C9 model=cap_mim_m3_2 W=15 L=10 MF=20 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_1.sym} -420 170 1 0 {name=C10 model=cap_mim_m3_1 W=19 L=10 MF=20 spiceprefix=X}
+C {Analog/chopper.sym} -540 20 0 0 {name=x36}
+C {lab_wire.sym} 1260 220 0 1 {name=p176 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 1260 240 0 1 {name=p177 sig_type=std_logic lab=clkCh1_nd}
+C {lab_wire.sym} 1260 260 0 1 {name=p178 sig_type=std_logic lab=clkCh1}
+C {lab_wire.sym} 1260 280 0 1 {name=p179 sig_type=std_logic lab=clkCh1_b}
+C {Analog/NonOverlappingClk.sym} 1090 240 0 0 {name=x37}
+C {lab_wire.sym} 1260 200 0 1 {name=p180 sig_type=std_logic lab=VSS}
+C {lab_wire.sym} 1160 150 0 1 {name=p206 sig_type=std_logic lab=VDD}
+C {sky130_stdcells/nand2_1.sym} 1685 185 0 0 {name=x14 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/inv_1.sym} 1805 185 0 0 {name=x15 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {lab_wire.sym} 1605 225 0 0 {name=p23 sig_type=std_logic lab=clk2_nd}
+C {lab_wire.sym} 1605 165 0 0 {name=p24 sig_type=std_logic lab=DAC_b}
+C {lab_wire.sym} 1605 345 0 0 {name=p25 sig_type=std_logic lab=clk2_nd}
+C {lab_wire.sym} 1605 285 0 0 {name=p26 sig_type=std_logic lab=DAC}
+C {lab_wire.sym} 1865 185 2 0 {name=p32 sig_type=std_logic lab=clkDn}
+C {lab_wire.sym} 1865 305 2 0 {name=p33 sig_type=std_logic lab=clkDp}
+C {sky130_stdcells/nand2_1.sym} 1685 305 0 0 {name=x16 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/inv_1.sym} 1805 305 0 0 {name=x17 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {lab_wire.sym} 1755 255 0 1 {name=p70 sig_type=std_logic lab=clkDp_b}
+C {lab_wire.sym} 1755 135 0 1 {name=p71 sig_type=std_logic lab=clkDn_b}
+C {lab_wire.sym} 1605 495 0 0 {name=p34 sig_type=std_logic lab=clk1_nd}
+C {lab_wire.sym} 1605 435 0 0 {name=p35 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 1605 615 0 0 {name=p36 sig_type=std_logic lab=clk2_nd}
+C {lab_wire.sym} 1605 555 0 0 {name=p37 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 1865 455 2 0 {name=p38 sig_type=std_logic lab=clk1}
+C {lab_wire.sym} 1865 575 2 0 {name=p39 sig_type=std_logic lab=clk2}
+C {lab_wire.sym} 2115 495 0 0 {name=p60 sig_type=std_logic lab=clk1e_nd}
+C {lab_wire.sym} 2115 435 0 0 {name=p79 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 2115 615 0 0 {name=p80 sig_type=std_logic lab=clk2e_nd}
+C {lab_wire.sym} 2115 555 0 0 {name=p81 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 2375 455 2 0 {name=p82 sig_type=std_logic lab=clk1e}
+C {lab_wire.sym} 2375 575 2 0 {name=p83 sig_type=std_logic lab=clk2e}
+C {sky130_stdcells/nand2_1.sym} 1685 455 0 0 {name=x18 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/inv_1.sym} 1805 455 0 0 {name=x19 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/nand2_1.sym} 1685 575 0 0 {name=x20 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/inv_1.sym} 1805 575 0 0 {name=x21 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/nand2_1.sym} 2195 455 0 0 {name=x25 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/inv_1.sym} 2315 455 0 0 {name=x26 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/nand2_1.sym} 2195 575 0 0 {name=x27 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {sky130_stdcells/inv_1.sym} 2315 575 0 0 {name=x34 VGND=VSS VNB=VSS VPB=VDD VPWR=VDD prefix=sky130_fd_sc_hd__ }
+C {lab_wire.sym} 1755 415 0 1 {name=p89 sig_type=std_logic lab=clk1_b}
+C {lab_wire.sym} 1755 535 0 1 {name=p90 sig_type=std_logic lab=clk2_b}
+C {lab_wire.sym} 2265 415 0 1 {name=p92 sig_type=std_logic lab=clk1e_b}
+C {lab_wire.sym} 2265 535 0 1 {name=p93 sig_type=std_logic lab=clk2e_b}
+C {Analog/FullyDiffOTA.sym} -410 20 0 0 {name=x1}
+C {lab_wire.sym} 20 -100 0 1 {name=p10 sig_type=std_logic lab=OUTp}
+C {lab_wire.sym} 20 120 0 1 {name=p12 sig_type=std_logic lab=OUTn}
+C {iopin.sym} 1740 -155 0 0 {name=p17 lab=clkCh2_nd}
+C {lab_wire.sym} -430 -90 0 1 {name=p18 sig_type=std_logic lab=clkCh2_nd}
+C {noconn.sym} -250 -250 0 0 {name=l1}
+C {noconn.sym} -250 -190 0 0 {name=l2}
