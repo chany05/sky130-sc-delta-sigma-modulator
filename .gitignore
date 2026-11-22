@@ -22,3 +22,5 @@ results/**/*.txt
 .DS_Store
 Thumbs.db
 .vscode/
+netlists/tb_integrator_chopper_mech.spice
+netlists/tb_integrator_chopper_timing.spice
