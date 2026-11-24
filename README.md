@@ -16,7 +16,7 @@ A transistor-level (SKY130, Xschem / ngspice) 2nd-order 1-bit fully differential
 ## Highlights
 
 - The specifications (GBW, DC gain, slew rate, $C_s$, switch $R_{on}$) are derived step by step from the sensor noise and the 16-bit target (see Specifications and Circuit-level Requirements).
-- SNDR: the final value comes from coherent 8 ms runs (375 Hz input, with and without injected noise), which are still being simulated: [estimating] dB. Non-coherent 13 ms records give 89.0 dB without and 89.6 dB with injected noise, the same as the ideal model on records of the same length, so that value is set by the record (see SNDR). The first design reached only 68–70 dB because the chopper added an error at every polarity reversal; its two causes (chopper clock overlap, and the output chopper flipping the OTA output node) are fixed (see Integrator).
+- SNDR: 102.1 dB (16.7 bit) with injected kT/C and flicker noise, on 8 ms records with a 375 Hz input (mean of 4 runs, 99.4 – 105.8 dB). Without injected noise the circuit reaches 113.5 dB, the same as the ideal model on the same record (114.6 dB). The first design reached only 68–70 dB because the chopper added an error at every polarity reversal; its two causes (chopper clock overlap, and the output chopper flipping the OTA output node) are fixed (see Integrator).
 - With kT/C and flicker noise and an ideal chopper, the noise budget estimates $\approx$ 96 dB (15.7 bit): above the requirement (95.2 dB) and below the design target (98.1 dB).
 - Integrator tests: the 2nd integrator is within 0.7 % of the ideal coefficients. After the chopper fixes the 1st integrator has a DAC step of −0.10 % and an input step of −0.62 %, with no odd / even alternation (see Integrator).
 - Switches: the bootstrap switch has a monotonic $R_{on}$ (at most 1.41 kΩ, below the 2.43 kΩ limit). The TG reaches 0.9 kΩ, above the 0.5 kΩ target of the summing-node switch, so its width has to be increased.
@@ -25,8 +25,8 @@ A transistor-level (SKY130, Xschem / ngspice) 2nd-order 1-bit fully differential
 
 | Item | Result | Note |
 |---|---|---|
-| SNDR | [estimating] dB | Coherent 8 ms records (375 Hz), mean of 4 runs with injected noise. Non-coherent 13 ms records: 89.0 dB, 89.6 dB with noise, limited by the record |
-| ENOB | [estimating] bit | From the 8 ms runs |
+| SNDR | 102.1 dB | 8 ms records, 375 Hz input, mean of 4 runs with injected noise (99.4 – 105.8 dB). 113.5 dB without injected noise |
+| ENOB | 16.7 bit | From the SNDR with injected noise |
 | Noise budget estimate | $\approx$ 96 dB (15.7 bit) | Quantization + kT/C + chopped OTA noise, ideal chopper |
 | Requirement / design target | ≥ 95.2 dB / 98.1 dB | 15.5 bit / 16 bit |
 | Power | 684 µW | Static bias only. Comparator, clock and references are ideal |
@@ -667,42 +667,42 @@ The transient simulation does not include device noise, so the noise is analyzed
   - kT/C source `trnoise(63.7u 488.28n 0 0)`: the white PSD of one source is $`2\,NA^2\,NT`$ = 3.96e-15 V²/Hz. Measured: 3.98e-15 V²/Hz at 10–100 kHz (1.00×) and 3.81e-15 V²/Hz at 1–10 kHz (0.96×). The two sources together give 1.6e-11 V² in the 2 kHz band (the 100–1000 Hz bin gives 0.80× only because there are few Welch bins at low frequency). The 63.7 µV is the value for $C_s$ = 4 pF; for the implemented 4.2 pF the table value is 1.53e-11 V², so the injected kT/C noise is about 3.5 % larger, which is slightly conservative.
   - Flicker source `trnoise(0 1u 0.85 66.4u)`: no white part (NA = 0), NT = 1 µs, exponent NALPHA = 0.85, amplitude NAMP = 66.4 µ; measured slope $f^{-0.81}$ and 9.7e-13 V²/Hz at 1 kHz (2.9e-12 at 100–300 Hz, 6.3e-13 at 1–3 kHz, 9.4e-14 at 10–30 kHz).
     - NAMP is scaled from a standalone run with NAMP = 1 µ so that the PSD matches the `.noise` result of the 1st OTA. For the current OTA the injected PSD equals the OTA at 1 kHz (9.67e-13 V²/Hz) and is within 30 % at 100–300 Hz.
-- Comparison runs: (A) no noise, (B) noise without chopper, (C) noise with chopper. For the fixed circuit, A and C are run on coherent 8 ms records (4 runs each, the final result), and on 13 ms records as an example (see SNDR). B is not simulated because of the run time. For the first design, C was done for 32 ms and A only for 2.4 ms.
+- Comparison runs: (A) no noise, (B) noise without chopper, (C) noise with chopper. For the fixed circuit, A and C are run on 8 ms records (1 run without noise, which is deterministic, and 4 runs with noise; the final result), and on 13 ms records as an example (see SNDR). B is not simulated because of the run time. For the first design, C was done for 32 ms and A only for 2.4 ms.
 - The flicker noise of the 2nd OTA is not injected. Referred to the modulator input it is attenuated by the gain of the 1st integrator ($\approx$ 98 at 1 kHz), and the estimate is 1e-12 – 3e-12 V² in band (a few % of the noise budget, about 0.1 – 0.3 dB).
 
 ### 6. 2nd-order modulator: spectrum and SNDR
-<!-- TODO: fill the [estimating] values and add the PSD figure when the 8 ms runs finish, then remove this comment. -->
 
 **Setup**
-- Input: −6 dBFS sine, coherent: $`f_{in} = k\,f_s / N`$ with $k$ = 3 and $N$ = 16384 → 375 Hz. The record is 8 ms (125 Hz per bin, 16 bins in the 2 kHz band).
-- 4 runs with injected noise (kT/C and flicker, see Noise analysis) and 4 runs without. The SNDR is computed for each run. The table gives the mean and the spread, and the PSD in the figure is the average of the runs.
-- The noise is integrated in band (0–2 kHz) with the DC and signal bins excluded. Window: [estimating] (`analyze_modulator_fixed.m`).
+- Input: −6 dBFS sine at 375 Hz, 3 periods in $N$ = 16384 samples. 8.02 ms are simulated and the last 16384 samples are used (125 Hz per bin, 16 bins in the 2 kHz band).
+- 4 runs with injected noise (kT/C at both inputs and flicker at the 1st OTA, see Noise analysis; different seeds) and 1 run without, which is deterministic. The chopper runs in all of them. The SNDR is computed for each run. The table gives the value from the mean noise power and the range, and the PSD in the figure is the average of the runs.
+- Hann window. The fundamental and DC are removed with a Hann-weighted least-squares fit, and the residual is integrated from 125 Hz to 2 kHz (`analyze_modulator_8ms.m`). A plain FFT is not used: 375 Hz is not exactly coherent with the 488.28 ns clock period, which would limit even the ideal model to about 93 dB.
 - ngspice options: `method = gear`, `reltol = 3e-6`, `vntol = 3e-8`, `abstol = 1e-12`, `trtol = 2`.
-- Reference: the ideal behavioral model on the same record resolves 105.6 dB, so an SNDR near the design target (98.1 dB) can be measured.
+- Reference: the ideal behavioral model on the same record gives 114.6 dB with this method (112.9 – 116.8 dB over the input phase), so an SNDR near the design target (98.1 dB) can be measured.
 
 **Result**
 
-<!-- TODO: PSD figure of the 8 ms runs (average of the runs, with and without injected noise, against the ideal model) -->
+![PSD of the modulator, 8 ms runs](docs/figures/psd_8ms.svg)
+*Output PSD of the fixed circuit on the 8 ms records, without injected noise and with injected noise (mean of 4 runs), against the ideal behavioral model. The dotted line is the 2 kHz band edge.*
 
-| Case | Runs | SNDR (mean) | Spread (min – max) | ENOB | In-band floor (FS²/Hz) |
+| Case | Runs | SNDR | Range over the runs | ENOB | In-band noise |
 |---|---|---|---|---|---|
-| Ideal behavioral model, same record | 1 | 105.6 dB | — | 17.2 bit | [estimating] |
-| Circuit, no injected noise | 4 | [estimating] dB | [estimating] – [estimating] dB | [estimating] bit | [estimating] |
-| Circuit, noise injected (final) | 4 | **[estimating] dB** | [estimating] – [estimating] dB | **[estimating] bit** | [estimating] |
+| Ideal behavioral model, same record | 8 input phases | 114.6 dB | 112.9 – 116.8 dB | 18.7 bit | 6.3e-13 V² |
+| Circuit, no injected noise | 1 | 113.5 dB | — | 18.6 bit | 8.0e-13 V² |
+| Circuit, noise injected (final) | 4 | **102.1 dB** | 99.4 – 105.8 dB | **16.7 bit** | 1.11e-11 V² |
 | Requirement / design target | | ≥ 95.2 dB / 98.1 dB | | 15.5 / 16 bit | |
 
 - 40 dB/dec noise shaping. Above about 20 kHz the shaped noise follows the ideal model.
-- With injected noise the SNDR [meets / misses] the requirement (95.2 dB) by [estimating] dB and is [estimating] dB [above / below] the design target (98.1 dB).
+- With injected noise the SNDR meets the requirement (95.2 dB) by 6.9 dB and is 4.0 dB above the design target (98.1 dB).
 
 **Noise breakdown**
-- Without injected noise the circuit is [estimating] dB below the ideal model. This is the loss of the circuit itself (settling, finite gain, chopper residue).
-- The injected noise costs a further [estimating] dB. This is the kT/C noise and the OTA noise that remains after chopping.
-- The spread over the 4 noisy runs is [estimating] dB, so smaller differences are not significant.
+- Without injected noise the circuit is 1.1 dB below the mean of the ideal model and inside its range. The circuit itself (settling, finite gain, chopper) adds no visible error in band.
+- The injected noise costs 11.4 dB: the in-band noise rises from 8.0e-13 to 1.11e-11 V².
+- The range over the 4 noisy runs is 6.4 dB, because the 2 kHz band holds only 16 bins. Differences of a few dB between single runs are not significant.
 - Not simulated: noise without the chopper. The chopper improvement of 28.6 dB stays an analytic estimate (see Noise analysis).
 
 **Comparison with the noise budget**
-- The budget estimates $\approx$ 96 dB (quantization + kT/C + chopped OTA noise, ideal chopper). The simulation gives [estimating] dB, a difference of [estimating] dB.
-- [Reason for the difference: folding of the OTA thermal noise by the sampling, chopper non-idealities, ...]
+- The budget estimates $\approx$ 96 dB (quantization + kT/C + chopped OTA noise, ideal chopper). The simulation gives 102.1 dB, 6 dB more.
+- The difference is the OTA term. The budget keeps the OTA noise density at $f_{ch}$ in band (2.6e-11 V²), while in the simulation the chopper removes the injected flicker noise almost completely. The simulated in-band noise (1.11e-11 V²) is at the level of the kT/C term (1.53e-11 V²).
 
 **Example: non-coherent 13 ms records**
 - Before the coherent runs, the fixed circuit was simulated on 13 ms records (343.75 Hz input, about 26000 samples, not coherent). They give 89.0 dB without and 89.6 dB with injected noise.
@@ -733,7 +733,7 @@ The transient simulation does not include device noise, so the noise is analyzed
 | 2nd integrator steps | DAC 0.436 V, input −12.1 mV | 0.4355 V (−0.19 %), −12.04 mV (−0.66 %) | |
 | Settling residue | < 0.5 LSB | 1st: 0.20 LSB, 2nd: 0.014 LSB | Met |
 | Noise budget | SNDR ≥ 95.2 dB | $\approx$ 96 dB (ideal chopper) | Estimate |
-| SNDR | ≥ 95.2 dB (target 98.1 dB) | [estimating] dB with injected noise (coherent 8 ms runs). 89.0 dB, 89.6 dB with noise on non-coherent 13 ms records | 8 ms runs in progress |
+| SNDR | ≥ 95.2 dB (target 98.1 dB) | 102.1 dB with injected noise (8 ms records, 4 runs: 99.4 – 105.8 dB), 113.5 dB without | Met |
 | Power | — | 684 µW, 380 µA from VDD ⁵ | |
 
 ¹ 25 °C, closed-loop AC (loop gain with the feedback factor $\beta$); PM required for $\zeta$ = 0.707.
@@ -751,7 +751,7 @@ The transient simulation does not include device noise, so the noise is analyzed
 ## Limitations & Next Steps
 
 **Limitations of the results**
-- **The final SNDR is still being simulated.** The coherent 8 ms runs (375 Hz, 16384 samples, 4 runs with and 4 without injected noise) can resolve 105.6 dB with the ideal model. Until they finish, only the non-coherent 13 ms records are available, and those are limited to about 89 dB by the leakage of the signal (see SNDR).
+- **The SNDR comes from 8 ms records.** The 2 kHz band holds 16 bins of 125 Hz, nothing below 125 Hz is seen, and single runs differ by up to 6 dB. The value is the mean of 4 runs.
 - **The SNDR could not be measured over a full record.** The transistor-level modulator (2 OTAs, choppers, SC CMFB) took about 16 h for 32 ms (65536 cycles) with loose solver tolerances, and tighter tolerances make the run about 10 times slower (about 0.2 ms per hour).
 - The noise budget gives $\approx$ 96 dB (ENOB 15.7): about 0.9 dB above the requirement (95.2 dB) and about 2 dB below the design target (98.1 dB). The OTA 1 noise remaining after the chopper is the largest term (2.6e-11 of 4.2e-11 V²). The estimate assumes an ideal chopper and ignores the folding of the OTA thermal noise by the sampling, so it is probably optimistic.
 - The chopper improvement of the flicker noise (28.6 dB) is an analytic estimate for an ideal chopper. The run with noise and without the chopper (B) was not completed.
@@ -782,7 +782,8 @@ The transient simulation does not include device noise, so the noise is analyzed
 │   ├── plot_switch_ron.m / analyze_bs_corners.m                       switch Ron figures, bootstrap corners and distortion estimate
 │   ├── analyze_chopper.m / plot_ch_ota_bode.m / analyze_ch_flicker.m  chopper standalone, loop gain, flicker rejection
 │   ├── check_trnoise.m / plot_ota_noise.m / plot_ota_bode.m           trnoise source check, OTA noise (PSD, per-device share), OTA loop gain
-│   └── analyze_modulator_psd.m / analyze_modulator_fixed.m            modulator spectrum and SNDR (first design / fixed circuit)
+│   ├── analyze_modulator_psd.m / analyze_modulator_fixed.m            modulator spectrum and SNDR (first design / 13 ms records)
+│   └── analyze_modulator_8ms.m                                        SNDR and PSD of the 8 ms runs (final result)
 └── results/                                                           selected simulation outputs (the large ngspice dumps are not in git, see .gitignore; the netlists regenerate them)
 ```
 

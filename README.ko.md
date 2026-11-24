@@ -16,7 +16,7 @@ MEMS 가속도 센서 인터페이스용 2차 1-bit fully differential switched-
 ## Highlights
 
 - 스펙(GBW, DC gain, slew rate, $C_s$, switch $R_{on}$)을 센서 잡음과 16 bit 목표에서 단계별로 도출함 (Specifications, Circuit-level Requirements 참조).
-- SNDR: 최종 값은 coherent 8 ms run(375 Hz 입력, 잡음 주입 유무)에서 구하며, 지금 시뮬레이션 중임: [estimating] dB. Non-coherent 13 ms record에서는 잡음 주입 없이 89.0 dB, 주입 시 89.6 dB로, 같은 길이로 자른 이상 model과 같은 값임. 즉 이 값은 record에서 오는 한계임 (SNDR 참조). 수정 전 회로는 chopper 극성이 바뀔 때마다 오차가 생겨 68–70 dB에 그쳤으며, 원인 두 가지(chopper clock overlap, 출력 chopper가 OTA 출력 node를 뒤집음)는 수정했음 (Integrator 참조).
+- SNDR: kT/C와 flicker noise를 주입한 상태에서 102.1 dB (16.7 bit)임. 375 Hz 입력의 8 ms record 기준이며 4 run의 평균임 (99.4 – 105.8 dB). 잡음을 주입하지 않으면 113.5 dB로, 같은 record의 이상 model(114.6 dB)과 같음. 수정 전 회로는 chopper 극성이 바뀔 때마다 오차가 생겨 68–70 dB에 그쳤으며, 원인 두 가지(chopper clock overlap, 출력 chopper가 OTA 출력 node를 뒤집음)는 수정했음 (Integrator 참조).
 - kT/C와 flicker noise를 포함하고 chopper가 ideal이라고 가정한 noise budget은 $\approx$ 96 dB (15.7 bit)로 추정되며, 요구(95.2 dB)보다 높고 설계 목표(98.1 dB)보다 낮음.
 - Integrator 테스트: 2nd integrator는 이상 계수와 0.7 % 이내로 일치함. Chopper 수정 후 1st integrator는 DAC step −0.10 %, input step −0.62 %이고 홀짝 교대가 없음 (Integrator 참조).
 - Switch: bootstrap switch의 $R_{on}$은 monotonic함 (최대 1.41 kΩ, 한계 2.43 kΩ 이하). TG는 0.9 kΩ에 달해 summing-node switch의 목표 0.5 kΩ보다 높으므로 width를 키워야 함.
@@ -25,8 +25,8 @@ MEMS 가속도 센서 인터페이스용 2차 1-bit fully differential switched-
 
 | Item | Result | Note |
 |---|---|---|
-| SNDR | [estimating] dB | Coherent 8 ms record (375 Hz), 잡음 주입 run 4개의 평균. Non-coherent 13 ms record에서는 89.0 dB, 잡음 주입 시 89.6 dB (record의 한계) |
-| ENOB | [estimating] bit | 8 ms run 기준 |
+| SNDR | 102.1 dB | 8 ms record, 375 Hz 입력, 잡음 주입 run 4개의 평균 (99.4 – 105.8 dB). 잡음 주입 없이는 113.5 dB |
+| ENOB | 16.7 bit | 잡음 주입 SNDR 기준 |
 | Noise budget 추정 | $\approx$ 96 dB (15.7 bit) | Quantization + kT/C + chopper 후 OTA noise, ideal chopper 가정 |
 | 요구 / 설계 목표 | ≥ 95.2 dB / 98.1 dB | 15.5 bit / 16 bit |
 | Power | 684 µW | Static bias만. Comparator, clock, reference는 ideal |
@@ -672,42 +672,42 @@ Transient simulation에는 device noise가 포함되지 않으므로, 잡음을 
   - 63.7 µV는 $C_s$ = 4 pF 기준 값임. 구현된 4.2 pF에서는 표의 값이 1.53e-11 V²이므로, 주입된 kT/C noise가 약 3.5 % 더 커서 약간 보수적임.
   - Flicker source `trnoise(0 1u 0.85 66.4u)`: white 성분 없음 (NA = 0), NT = 1 µs, 지수 NALPHA = 0.85, 진폭 NAMP = 66.4 µ; 측정된 기울기 $f^{-0.81}$, 1 kHz에서 9.7e-13 V²/Hz (100–300 Hz에서 2.9e-12, 1–3 kHz에서 6.3e-13, 10–30 kHz에서 9.4e-14).
     - NAMP는 NAMP = 1 µ 단독 run의 PSD를 1st OTA `.noise` 결과에 맞도록 scaling해서 정함. 현재 OTA 기준으로 주입 PSD는 1 kHz에서 OTA와 같고 (9.67e-13 V²/Hz), 100–300 Hz에서 30 % 이내임.
-- 비교 실행: (A) 잡음 없음, (B) chopper 없이 잡음 포함, (C) chopper 포함 잡음. 수정한 회로는 A와 C를 coherent 8 ms record로 돌리며 (각 4개, 최종 결과), 13 ms record는 예시로 둠 (SNDR 참조). B는 실행 시간 때문에 돌리지 않음. 수정 전 회로에서는 C를 32 ms, A를 2.4 ms만 돌렸음.
+- 비교 실행: (A) 잡음 없음, (B) chopper 없이 잡음 포함, (C) chopper 포함 잡음. 수정한 회로는 A와 C를 8 ms record로 돌렸음 (잡음 없는 run은 결정적이라 1개, 잡음 주입 run은 4개. 최종 결과). 13 ms record는 예시로 둠 (SNDR 참조). B는 실행 시간 때문에 돌리지 않음. 수정 전 회로에서는 C를 32 ms, A를 2.4 ms만 돌렸음.
 - 2nd OTA의 flicker noise는 주입하지 않음. Modulator 입력으로 환산하면 1st integrator의 gain(1 kHz에서 $\approx$ 98)만큼 감쇠되어 대역 내 1e-12 – 3e-12 V² (noise budget의 몇 %, 약 0.1 – 0.3 dB)로 추정됨.
 
 ### 6. 2nd-order modulator: spectrum과 SNDR
-<!-- TODO: 8 ms run이 끝나면 [estimating] 값을 채우고 PSD 그림을 넣은 뒤 이 주석을 지움. -->
 
 **Setup**
-- 입력: −6 dBFS sine, coherent sampling: $`f_{in} = k\,f_s / N`$ ($k$ = 3, $N$ = 16384 → 375 Hz). Record는 8 ms임 (bin당 125 Hz, 2 kHz 대역에 16 bin).
-- 잡음을 주입한 run 4개 (kT/C와 flicker, Noise analysis 참조), 주입하지 않은 run 4개. SNDR은 run마다 구함. 표에는 평균과 산포를 적고, 그림의 PSD는 run들의 평균임.
-- 잡음은 DC와 signal bin을 제외하고 대역 내(0–2 kHz)에서 적분함. Window: [estimating] (`analyze_modulator_fixed.m`).
+- 입력: 375 Hz의 −6 dBFS sine, $N$ = 16384 sample에 3주기. 8.02 ms를 시뮬레이션하고 마지막 16384 sample을 씀 (bin당 125 Hz, 2 kHz 대역에 16 bin).
+- 잡음을 주입한 run 4개 (두 입력의 kT/C와 1st OTA의 flicker, Noise analysis 참조. seed가 서로 다름), 주입하지 않은 run 1개 (결정적임). 모든 run에서 chopper는 켜져 있음. SNDR은 run마다 구함. 표에는 평균 noise power로 구한 값과 범위를 적고, 그림의 PSD는 run들의 평균임.
+- Hann window를 씀. 신호와 DC는 Hann 가중 최소제곱 fit으로 빼고, residual을 125 Hz부터 2 kHz까지 적분함 (`analyze_modulator_8ms.m`). Window 없는 FFT는 쓰지 않음. 375 Hz가 clock 주기 488.28 ns와 정확히 coherent하지 않아, 이상 model도 약 93 dB로 제한되기 때문임.
 - ngspice options: `method = gear`, `reltol = 3e-6`, `vntol = 3e-8`, `abstol = 1e-12`, `trtol = 2`.
-- 기준: 같은 record에서 이상 behavioral model은 105.6 dB까지 구분하므로, 설계 목표(98.1 dB) 근처의 SNDR을 측정할 수 있음.
+- 기준: 같은 record에서 이상 behavioral model은 이 방법으로 114.6 dB임 (입력 위상에 따라 112.9 – 116.8 dB). 따라서 설계 목표(98.1 dB) 근처의 SNDR을 측정할 수 있음.
 
 **결과**
 
-<!-- TODO: 8 ms run의 PSD 그림 (run 평균, 잡음 주입 유무, 이상 model과 비교) -->
+![PSD of the modulator, 8 ms runs](docs/figures/psd_8ms.svg)
+*8 ms record에서 수정한 회로의 출력 PSD (잡음 주입 없음, 잡음 주입 run 4개의 평균)와 이상 behavioral model의 비교. 점선은 2 kHz 대역 경계.*
 
-| Case | Runs | SNDR (평균) | 산포 (min – max) | ENOB | In-band floor (FS²/Hz) |
+| Case | Runs | SNDR | Run 간 범위 | ENOB | In-band noise |
 |---|---|---|---|---|---|
-| 이상 behavioral model, 같은 record | 1 | 105.6 dB | — | 17.2 bit | [estimating] |
-| 회로, 잡음 주입 없음 | 4 | [estimating] dB | [estimating] – [estimating] dB | [estimating] bit | [estimating] |
-| 회로, 잡음 주입 (최종) | 4 | **[estimating] dB** | [estimating] – [estimating] dB | **[estimating] bit** | [estimating] |
+| 이상 behavioral model, 같은 record | 입력 위상 8가지 | 114.6 dB | 112.9 – 116.8 dB | 18.7 bit | 6.3e-13 V² |
+| 회로, 잡음 주입 없음 | 1 | 113.5 dB | — | 18.6 bit | 8.0e-13 V² |
+| 회로, 잡음 주입 (최종) | 4 | **102.1 dB** | 99.4 – 105.8 dB | **16.7 bit** | 1.11e-11 V² |
 | 요구 / 설계 목표 | | ≥ 95.2 dB / 98.1 dB | | 15.5 / 16 bit | |
 
 - 40 dB/dec noise shaping. 약 20 kHz 이상에서는 shaped noise가 이상 model을 따라감.
-- 잡음을 주입한 SNDR은 요구(95.2 dB)를 [estimating] dB 차이로 [만족함 / 만족하지 못함]. 설계 목표(98.1 dB)보다는 [estimating] dB [높음 / 낮음].
+- 잡음을 주입한 SNDR은 요구(95.2 dB)보다 6.9 dB, 설계 목표(98.1 dB)보다 4.0 dB 높음.
 
 **Noise breakdown**
-- 잡음을 주입하지 않은 회로는 이상 model보다 [estimating] dB 낮음. 회로 자체의 손실임 (settling, 유한한 gain, chopper 잔류 오차).
-- 잡음을 주입하면 [estimating] dB 더 낮아짐. kT/C noise와 chopper 후 남는 OTA noise의 영향임.
-- 잡음 주입 run 4개의 산포는 [estimating] dB이므로, 이보다 작은 차이는 의미가 없음.
+- 잡음을 주입하지 않은 회로는 이상 model의 평균보다 1.1 dB 낮고, 이상 model의 범위 안에 있음. 회로 자체(settling, 유한한 gain, chopper)가 대역 안에 더하는 오차는 보이지 않음.
+- 잡음을 주입하면 11.4 dB 낮아짐. In-band noise가 8.0e-13에서 1.11e-11 V²로 늘어남.
+- 잡음 주입 run 4개의 범위는 6.4 dB임. 2 kHz 대역에 bin이 16개뿐이기 때문이며, run 하나끼리의 몇 dB 차이는 의미가 없음.
 - 시뮬레이션하지 않은 것: chopper 없이 잡음만 주입한 경우. Chopper에 의한 개선 28.6 dB는 해석적 추정으로 남음 (Noise analysis 참조).
 
 **Noise budget과의 비교**
-- Budget 추정은 $\approx$ 96 dB (quantization + kT/C + chopper 후 OTA noise, ideal chopper 가정). 시뮬레이션은 [estimating] dB로, 차이는 [estimating] dB임.
-- [차이의 원인: sampling에 의한 OTA 열잡음 folding, chopper 비이상성, ...]
+- Budget 추정은 $\approx$ 96 dB (quantization + kT/C + chopper 후 OTA noise, ideal chopper 가정). 시뮬레이션은 102.1 dB로 6 dB 높음.
+- 차이는 OTA 항에서 나옴. Budget은 $f_{ch}$에서의 OTA noise 밀도가 대역에 남는다고 봄 (2.6e-11 V²). 시뮬레이션에서는 주입한 flicker noise를 chopper가 거의 다 제거함. 시뮬레이션의 in-band noise(1.11e-11 V²)는 kT/C 항(1.53e-11 V²) 수준임.
 
 **예시: non-coherent 13 ms record**
 - Coherent run 전에 수정한 회로를 13 ms record로 시뮬레이션했음 (입력 343.75 Hz, 약 26000 sample, non-coherent). 잡음 주입 없이 89.0 dB, 주입 시 89.6 dB임.
@@ -738,7 +738,7 @@ Transient simulation에는 device noise가 포함되지 않으므로, 잡음을 
 | 2nd integrator step | DAC 0.436 V, input −12.1 mV | 0.4355 V (−0.19 %), −12.04 mV (−0.66 %) | |
 | Settling residue | < 0.5 LSB | 1st: 0.20 LSB, 2nd: 0.014 LSB | 만족 |
 | Noise budget | SNDR ≥ 95.2 dB | $\approx$ 96 dB (ideal chopper) | 추정 |
-| SNDR | ≥ 95.2 dB (설계 목표 98.1 dB) | 잡음 주입 시 [estimating] dB (coherent 8 ms run). Non-coherent 13 ms record에서는 89.0 dB, 잡음 주입 시 89.6 dB | 8 ms run 진행 중 |
+| SNDR | ≥ 95.2 dB (설계 목표 98.1 dB) | 잡음 주입 시 102.1 dB (8 ms record, 4 run: 99.4 – 105.8 dB), 주입 없이 113.5 dB | 만족 |
 | Power | — | 684 µW, VDD에서 380 µA ⁵ | |
 
 ¹ 25 °C, closed-loop AC (feedback factor $\beta$ 포함 loop gain). PM은 $\zeta$ = 0.707 기준 요구값.
@@ -756,7 +756,7 @@ Transient simulation에는 device noise가 포함되지 않으므로, 잡음을 
 ## Limitations & Next Steps
 
 **결과의 한계**
-- **최종 SNDR은 아직 시뮬레이션 중임.** Coherent 8 ms run(375 Hz, 16384 sample, 잡음 주입 4개와 미주입 4개)은 이상 model 기준 105.6 dB까지 구분할 수 있음. 끝나기 전까지는 non-coherent 13 ms record만 있고, 이 record는 신호의 leakage 때문에 약 89 dB로 제한됨 (SNDR 참조).
+- **SNDR은 8 ms record에서 구한 값임.** 2 kHz 대역에 125 Hz bin이 16개뿐이고, 125 Hz 아래는 보지 못하며, run 하나끼리는 최대 6 dB 차이가 남. 값은 4 run의 평균임.
 - **전체 record로 SNDR을 측정하지 못함.** 트랜지스터 레벨 modulator(OTA 2개, chopper, SC CMFB)는 느슨한 solver 허용 오차에서 32 ms(65536 cycle)에 약 16시간이 걸렸고, 허용 오차를 엄격히 하면 run이 약 10배 느려짐 (시간당 약 0.2 ms).
 - Noise budget으로 계산하면 $\approx$ 96 dB (ENOB 15.7)로, 요구(95.2 dB)보다 약 0.9 dB 높고 설계 목표(98.1 dB)보다 약 2 dB 낮음. Chopper 이후 남는 OTA 1 noise가 가장 큰 항임 (전체 4.2e-11 V² 중 2.6e-11). Ideal chopper를 가정하고 sampling에 의한 OTA 열잡음 folding을 무시한 값이므로 낙관적일 가능성이 높음.
 - Chopper에 의한 flicker noise 감소(28.6 dB)는 ideal chopper를 가정한 해석적 추정임. 잡음이 있고 chopper가 없는 run(B)은 완료하지 못함.
@@ -787,7 +787,8 @@ Transient simulation에는 device noise가 포함되지 않으므로, 잡음을 
 │   ├── plot_switch_ron.m / analyze_bs_corners.m                       switch Ron 그림, bootstrap corner와 distortion 추정
 │   ├── analyze_chopper.m / plot_ch_ota_bode.m / analyze_ch_flicker.m  chopper 단독, loop gain, flicker rejection
 │   ├── check_trnoise.m / plot_ota_noise.m / plot_ota_bode.m           trnoise source 확인, OTA noise (PSD, 소자별 비중), OTA loop gain
-│   └── analyze_modulator_psd.m / analyze_modulator_fixed.m            modulator spectrum과 SNDR (수정 전 / 수정 후 회로)
+│   ├── analyze_modulator_psd.m / analyze_modulator_fixed.m            modulator spectrum과 SNDR (수정 전 회로 / 13 ms record)
+│   └── analyze_modulator_8ms.m                                        8 ms run의 SNDR과 PSD (최종 결과)
 └── results/                                                           선별한 simulation 결과 (큰 ngspice 출력은 git에 없음, .gitignore 참조; netlist로 다시 만들 수 있음)
 ```
 
