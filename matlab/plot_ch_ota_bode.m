@@ -5,7 +5,7 @@
 % T = A * 0.6 (beta = 0.6), Tdb in dB, Tph = continuous phase in degrees. PM = 180 + Tph at the 0 dB crossing.
 clear; clc; close all;
 root = fileparts(mfilename('fullpath'));
-din  = fullfile(root, '..', 'results', 'chopper');
+din  = fullfile(root, '..', 'results', 'chopper_noc');   % fixed chopper (NOC, CH2 inside the OTA); the first design is in results/chopper
 out  = fullfile(root, '..', 'docs', 'figures');
 blue = [0 0.447 0.741];  dk = [0.2 0.2 0.2];  gry = [0.55 0.55 0.55];
 set(0, 'DefaultAxesFontName', 'Arial', 'DefaultAxesFontSize', 12);

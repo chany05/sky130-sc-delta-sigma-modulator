@@ -14,9 +14,12 @@ t_bit   = 300e-9;                % DAC bits are stable here (inside phi2)
 LSB     = 18.3e-6;               % [V] 16 bit, 1.2 V differential peak
 n_skip  = 3;                     % cycles skipped at the start (initial transient)
 
-stage     = 1;                   % which integrator the files belong to (1 or 2)
-stage_txt = '1st_stage'
-integ_dir = 'integrator';        % results/integrator (stage 2), use 'integrator/1stage' for stage 1
+integ_dir = 'integrator';        % results/integrator/1st_stage and 2nd_stage
+out_dir   = fullfile(root, '..', 'docs', 'figures');
+stage_dirs = {'1st_stage_fixed', '2nd_stage'};   % 1st integrator: fixed chopper (the first design is in 1st_stage)
+
+for stage = 1:2                  % both integrators, one 2 x 3 figure each (integ1_tests.png, integ2_tests.png)
+stage_txt = stage_dirs{stage};
 if stage == 1
     dac_ideal = 0.3 * 1.2;   CsCi = 4.2 / 14.0;     % Cd1/Ci1 * (VREFp - VREFn), Cs1/Ci1
 else
@@ -26,6 +29,9 @@ fprintf('Stage %d: ideal DAC step %.4f V, ideal input gain %.4f\n\n', stage, dac
 
 blue = [0 0.447 0.741];  gry = [0.55 0.55 0.55];  dk = [0.13 0.13 0.13];
 set(0, 'DefaultAxesFontName', 'Arial', 'DefaultAxesFontSize', 12);
+% Panel label above the axes. title() is not drawn in the exported file in R2026a prerelease.
+lab = @(s) text(0.5, 1.03, s, 'Units', 'normalized', 'HorizontalAlignment', 'center', ...
+    'VerticalAlignment', 'bottom', 'FontName', 'Arial', 'FontSize', 13, 'FontWeight', 'bold');
 
 %% 1) Integrator: DAC-only test  (ideal step = Cd/Ci * (VREFp - VREFn), see stage above)
 d  = rd(fullfile(res, integ_dir,stage_txt, 'integ_dac.txt'));   % time OUTp OUTn DAC DAC_b clk2
@@ -43,16 +49,18 @@ fprintf('Step per DAC bit : %.5f V (ideal %.4f V), error %.3f %%\n', g_dac, dac_
 fprintf('Step spread      : %.1f uV (std over %d cycles)\n', std(stp(ok) ./ bit(ok)) * 1e6, nnz(ok));
 fprintf('Output CM        : mean %.4f V, min %.4f V, max %.4f V\n\n', mean(cmk(ok)), min(cmk(ok)), max(cmk(ok)));
 
-figure('Color', 'w', 'Position', [100 100 1000 420]);
-tiledlayout(1, 2, 'TileSpacing', 'compact');
-nexttile; plot(t*1e6, vo, 'Color', blue, 'LineWidth', 1.4); hold on;
+K_dac = K;                                                % cycles of the DAC run, also used for the DC-input plots
+% One figure per integrator. Row 1: DAC-only test (output, step, settling). Row 2: DC-input test (same order).
+fig = figure('Color', 'w', 'Position', [60 60 1500 780]);
+tl  = tiledlayout(fig, 2, 3, 'TileSpacing', 'loose', 'Padding', 'compact');
+nexttile(tl, 1); plot(t*1e6, vo, 'Color', blue, 'LineWidth', 1.4); hold on;
 plot((k*T + t_samp)*1e6, vk, 'o', 'Color', dk, 'MarkerSize', 4);
-grid on; box off; xlabel('Time (\mus)'); ylabel('Differential output (V)'); title('DAC-only test');
-legend({'v_{out}', 'sampled at end of \phi_2'}, 'Location', 'layout', 'Box', 'off');
-nexttile; bar(k(ok), stp(ok) ./ bit(ok), 'FaceColor', blue, 'EdgeColor', 'w'); hold on;
+grid on; box off; xlabel('Time (\mus)'); ylabel('Differential output (V)'); lab('(a) DAC-only test: output');
+legend({'v_{out}', 'sampled at end of \phi_2'}, 'Location', 'southwest', 'Box', 'off');
+% Steps as a line with markers: the y axis zooms on the deviation from the ideal value (bars from zero hide it).
+nexttile(tl, 2); plot(k(ok), stp(ok) ./ bit(ok), 'o-', 'Color', blue, 'MarkerFaceColor', blue, 'MarkerSize', 4, 'LineWidth', 1.2); hold on;
 yline(dac_ideal * sign(g_dac), '--', 'ideal', 'Color', dk);
-grid on; box off; xlabel('Cycle'); ylabel('Step per DAC bit (V)'); title(sprintf('Step = %.4f V (%.2f %%)', g_dac, err_dac));
-% saveas(gcf, '../docs/figures/integrator_dac.svg');
+grid on; box off; xlabel('Cycle'); ylabel('Step per DAC bit (V)'); lab(sprintf('(b) Step per DAC bit: %.4f V (%+.2f %%)', g_dac, err_dac));
 
 %% 2) Integrator: DC input test  (ideal step = -(Cs/Ci) * VD)
 VD = 20e-3;
@@ -66,22 +74,22 @@ fprintf('--- DC input test (VD = %.0f mV) ---\n', VD*1e3);
 fprintf('Step per cycle   : %.4f mV (ideal %.4f mV), error %.2f %%\n', s_in*1e3, ideal*1e3, (s_in/ideal - 1)*100);
 fprintf('Output CM        : mean %.4f V, drift %.2f mV\n\n', mean(cmk(ok)), (max(cmk(ok)) - min(cmk(ok)))*1e3);
 
-figure('Color', 'w', 'Position', [100 100 1000 420]);
-tiledlayout(1, 2, 'TileSpacing', 'compact');
-nexttile; plot(t*1e6, vo*1e3, 'Color', blue, 'LineWidth', 1.4); hold on;
-plot((k*T + t_samp)*1e6, vk*1e3, 'o', 'Color', dk, 'MarkerSize', 4);
-grid on; box off; xlabel('Time (\mus)'); ylabel('Differential output (mV)'); title('DC input test');
-nexttile; bar(k(ok), stp(ok)*1e3, 'FaceColor', blue, 'EdgeColor', 'w'); hold on;
+% The DC-input run is about twice as long as the DAC run. The plots show the same number of cycles
+% as the DAC test (K_dac); the printed mean step above still uses the whole run.
+okp = ok & k < K_dac;  tp = t <= K_dac*T;
+nexttile(tl, 4); plot(t(tp)*1e6, vo(tp)*1e3, 'Color', blue, 'LineWidth', 1.4); hold on;
+plot((k(k < K_dac)*T + t_samp)*1e6, vk(k < K_dac)*1e3, 'o', 'Color', dk, 'MarkerSize', 4);
+grid on; box off; xlim([0 K_dac*T*1e6]); xlabel('Time (\mus)'); ylabel('Differential output (mV)'); lab('(d) DC-input test: output');
+nexttile(tl, 5); plot(k(okp), stp(okp)*1e3, 'o-', 'Color', blue, 'MarkerFaceColor', blue, 'MarkerSize', 4, 'LineWidth', 1.2); hold on;
 yline(ideal*1e3, '--', 'ideal', 'Color', dk);
-grid on; box off; xlabel('Cycle'); ylabel('Step per cycle (mV)'); title(sprintf('Step = %.3f mV', s_in*1e3));
-% saveas(gcf, '../docs/figures/integrator_input.svg');
+grid on; box off; xlabel('Cycle'); ylabel('Step per cycle (mV)'); lab(sprintf('(e) Step per cycle: %.3f mV (%+.2f %%)', s_in*1e3, (s_in/ideal - 1)*100));
 
 %% 3) Integrator: settling residue at the end of phi2 (fine time step runs)
 names = {'integ_dac_fine.txt', 'integ_in_fine.txt'};
 labels = {'DAC step', 'input step'};
 t_win = 40e-9;                                            % window before the sampling point
 fprintf('--- Settling residue (change during the last %.0f ns of phi2) ---\n', t_win*1e9);
-figure('Color', 'w', 'Position', [100 100 1000 420]);
+ttl = {'(c) DAC-only test: settling', '(f) DC-input test: settling'};
 for m = 1:2
     f  = rd(fullfile(res, integ_dir,stage_txt, names{m}));
     t  = f(:,1);  vo = f(:,2) - f(:,3);
@@ -93,14 +101,15 @@ for m = 1:2
     kz = kk(ceil(numel(kk)/2));
     tz = linspace(kz*T + 240e-9, kz*T + 490e-9, 500);
     vz = interp1(t, vo, tz) - interp1(t, vo, kz*T + t_samp);
-    subplot(1, 2, m); semilogy((tz - kz*T)*1e9, abs(vz) + 1e-9, 'Color', blue, 'LineWidth', 1.6); hold on;
+    nexttile(tl, 3*m); semilogy((tz - kz*T)*1e9, abs(vz) + 1e-9, 'Color', blue, 'LineWidth', 1.6); hold on;
     yline(LSB, '--', '1 LSB', 'Color', dk, 'LabelHorizontalAlignment', 'left');
     xline(t_samp*1e9, ':', 'sampling point', 'Color', gry, 'LabelVerticalAlignment', 'bottom');
     grid on; box off; xlim([240 490]); ylim([1e-8 1]);
-    xlabel('Time in cycle (ns)'); ylabel('|v_{out} - v_{final}| (V)'); title(labels{m});
+    xlabel('Time in cycle (ns)'); ylabel('|v_{out} - v_{final}| (V)'); lab(ttl{m});
 end
 fprintf('\n');
-% saveas(gcf, '../docs/figures/integrator_settling.svg');
+% print keeps the tile titles (exportgraphics crops them in R2026a prerelease)
+print(fig, fullfile(out_dir, sprintf('integ%d_tests.png', stage)), '-dpng', '-r200');
 
 % %% 4) TG switch: Ron vs input voltage (DC sweep)
 % corner_tg = 'ff';                                         % corner of the include lines in tb_switch_tg.spice
@@ -183,6 +192,8 @@ nexttile; semilogy(k*T*1e6, err + 1e-6, 'Color', blue, 'LineWidth', 1.6); hold o
 yline(1e-3, '--', '1 mV', 'Color', dk, 'LabelHorizontalAlignment', 'right');
 grid on; box off; xlabel('Time (\mus)'); ylabel('|CM - CM_{steady}| (V)'); title('CM convergence'); xlim([0 40]);
 % saveas(gcf, '../docs/figures/integrator_cm.svg');
+end   % for stage
+
 function d = dedup(d)
 d = d(~any(isnan(d), 2), :);                % 빈 줄/NaN 제거
 [~, i] = unique(d(:,1), 'stable');          % 같은 시간값은 첫 번째만 남김

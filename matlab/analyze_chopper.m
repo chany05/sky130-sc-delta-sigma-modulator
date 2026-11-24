@@ -1,9 +1,9 @@
-%% Chopper standalone: switching spike and modulation (netlists/tb_chopper_standalone.spice)
+%% Chopper standalone: switching spike and modulation (netlists/tb_fixed_chopper_standalone.spice)
 % Inputs (copy from /foss/designs): ../results/chopper/chopper_spike.txt  (t vout OUT1 OUT2 clkCh clkCh_b)
 %                                   ../results/chopper/chopper_mod.txt    (t vout vin)
 clear; clc; close all;
 root = fileparts(mfilename('fullpath'));
-dir_in = fullfile(root, '..', 'results', 'chopper');
+dir_in = fullfile(root, '..', 'results', 'chopper_noc');   % fixed chopper (NOC, CH2 inside the OTA); the first design is in results/chopper
 Tch = 976.56e-9;  fch = 1 / Tch;  fin = 20e3;
 
 %% 1) spike with zero input (differential output)

@@ -1,0 +1,269 @@
+** SC integrator 1 (fixed chopper): DAC-only step test. Flicker source of the integrator off.
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 27
+.param T=488.28n
+V1 VCM 0 0.9
+V2 VDD 0 1.8
+I0 Ibias1 0 30.8u
+V3 VSS 0 0
+Vrefp VREFp 0 1.5
+Vrefn VREFn 0 0.3
+V6 Vbias1 0 0.62
+Vclk1_nd clk1_nd 0 PULSE 0 1.8 2n 0.1n 0.1n 238n 488.28n
+Vclk1e_nd clk1e_nd 0 PULSE 0 1.8 2n 0.1n 0.1n 237n 488.28n
+Vclk2_nd clk2_nd 0 PULSE 0 1.8 246.14n 0.1n 0.1n 238n 488.28n
+Vclk2e_nd clk2e_nd 0 PULSE 0 1.8 246.14n 0.1n 0.1n 237n 488.28n
+Vclk_ch_nd clkCh_nd 0 PULSE 0 1.8 120n 0.1n 0.1n 488.18n 976.56n
+* fixed circuit: CH1 (clkCh1_nd) and CH2 inside the OTA (clkCh2_nd) share the chopper clock
+x1 clkCh_nd VDD clk1_nd OUTp INPUTp VSS clk2_nd INPUTn OUTn Ibias1 DAC clk1e_nd VCM DAC_b clk2e_nd VREFp VREFn Vbias1 clkCh_nd SC_Integrator
+.nodeset v(OUTp)=0.9 v(OUTn)=0.9
+.options method=gear reltol=1e-6 rshunt=1e12
+VinP INPUTp 0 dc 0.9
+VinN INPUTn 0 dc 0.9
+* DAC pattern +1, +1, -1, -1 (period 4 cycles), updated just after the phi1 rising edge
+Vdac  DAC   0 PULSE(0 1.8 {3n}       0.1n 0.1n {2*T-0.2n} {4*T})
+Vdacb DAC_b 0 PULSE(0 1.8 {3n+2*T}   0.1n 0.1n {2*T-0.2n} {4*T})
+.control
+  set wr_singlescale
+  set wr_vecnames
+  option numdgt=8
+  tran 1n 10u 0 1n
+  wrdata /foss/designs/integ_dac.txt v(OUTp) v(OUTn) v(DAC) v(DAC_b) v(clk2_nd)
+  tran 0.2n 4.9u 2.4u 0.2n
+  wrdata /foss/designs/integ_dac_fine.txt v(OUTp) v(OUTn) v(clk2_nd) v(clk2e_nd)
+.endc
+
+.subckt SC_Integrator clkCh1_nd VDD clk1_nd OUTp INPUTp VSS clk2_nd INPUTn OUTn Ibias DAC clk1e_nd VCM DAC_b clk2e_nd VREFp VREFn
++ Vbias clkCh2_nd
+*.iopin clk2e_nd
+*.iopin clk1e_nd
+*.iopin clk2_nd
+*.iopin clk1_nd
+*.iopin VDD
+*.iopin VSS
+*.iopin VCM
+*.iopin Ibias
+*.ipin INPUTp
+*.ipin INPUTn
+*.iopin VREFp
+*.iopin VREFn
+*.iopin Vbias
+*.ipin DAC
+*.ipin DAC_b
+*.opin OUTp
+*.opin OUTn
+*.iopin clkCh1_nd
+*.iopin clkCh2_nd
+XC16 net1 net2 sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=6 m=6
+XC17 net1 net2 sky130_fd_pr__cap_mim_m3_1 W=19 L=10 MF=6 m=6
+XC2 OUTp INn sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=20 m=20
+XC3 OUTp INn sky130_fd_pr__cap_mim_m3_1 W=19 L=10 MF=20 m=20
+XM2 VREFp clkDp_b net7 VDD sky130_fd_pr__pfet_01v8 L=0.15 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0
++ sd=0 mult=1
+XM1 VREFp clkDn_b net3 VDD sky130_fd_pr__pfet_01v8 L=0.15 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0
++ sd=0 mult=1
+XM3 VREFn clkDn net7 VSS sky130_fd_pr__nfet_01v8 L=0.15 W=1 nf=1 ad=0.29 as=0.29 pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0
++ mult=1
+XM4 VREFn clkDp net3 VSS sky130_fd_pr__nfet_01v8 L=0.15 W=1 nf=1 ad=0.29 as=0.29 pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0
++ mult=1
+x4 clk1_b clk1 VDD VSS INPUTn net2 Bootstrap_Switch Wn=1.0 Wp=1.0 LL=0.15
+x3 clk1_b clk1 VDD VSS INPUTp net6 Bootstrap_Switch Wn=1.0 Wp=1.0 LL=0.15
+x6 clk1e_b clk1e VDD VSS net1 VCM TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x9 clk1e_b clk1e VDD VSS net5 VCM TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x2 clk2_b clk2 VDD VSS VCM net2 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x5 clk1_b clk1 VDD VSS VCM net3 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x8 clk2_b clk2 VDD VSS VCM net6 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x11 clk1_b clk1 VDD VSS VCM net7 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x7 clk2e_b clk2e VDD VSS net1 INn TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x13 clk2e_b clk2e VDD VSS net5 INp TG_switch Wn=4.0 Wp=14.0 LL=0.35
+XC14 CMFB OUTp sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=1
+XC15 CMFB OUTp sky130_fd_pr__cap_mim_m3_1 W=10 L=10 MF=1
+XC18 CMFB OUTn sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=1
+XC19 CMFB OUTn sky130_fd_pr__cap_mim_m3_1 W=10 L=10 MF=1
+x23 clk1_b clk1 VDD VSS OUTn net8 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x12 clk1_b clk1 VDD VSS CMFB net9 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x22 clk2_b clk2 VDD VSS VCM net8 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x24 clk2_b clk2 VDD VSS Vbias net9 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+XC20 net9 net8 sky130_fd_pr__cap_mim_m3_2 W=3 L=2 MF=5 m=5
+XC21 net9 net8 sky130_fd_pr__cap_mim_m3_1 W=3 L=2 MF=5 m=5
+x28 clk1_b clk1 VDD VSS OUTp net10 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x29 clk1_b clk1 VDD VSS CMFB net11 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x30 clk2_b clk2 VDD VSS VCM net10 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+x31 clk2_b clk2 VDD VSS Vbias net11 TG_switch Wn=3.0 Wp=10.0 LL=0.35
+XC22 net11 net10 sky130_fd_pr__cap_mim_m3_2 W=3 L=2 MF=5 m=5
+XC23 net11 net10 sky130_fd_pr__cap_mim_m3_1 W=3 L=2 MF=5 m=5
+Vflicker net13 net14 dc 0
+XC1 net1 net3 sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=6 m=6
+XC4 net1 net3 sky130_fd_pr__cap_mim_m3_1 W=19 L=10 MF=6 m=6
+XC5 net5 net6 sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=6 m=6
+XC6 net5 net6 sky130_fd_pr__cap_mim_m3_1 W=19 L=10 MF=6 m=6
+XC7 net5 net7 sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=6 m=6
+XC8 net5 net7 sky130_fd_pr__cap_mim_m3_1 W=19 L=10 MF=6 m=6
+XC9 OUTn INp sky130_fd_pr__cap_mim_m3_2 W=15 L=10 MF=20 m=20
+XC10 OUTn INp sky130_fd_pr__cap_mim_m3_1 W=19 L=10 MF=20 m=20
+x36 clkCh1 VDD clkCh1_b VSS net12 INn net4 INp chopper
+x37 VSS VDD clkCh1_nd clkCh1 clkCh1_b VDD NonOverlappingClk
+x14 DAC_b clk2_nd VSS VSS VDD VDD clkDn_b sky130_fd_sc_hd__nand2_1
+x15 clkDn_b VSS VSS VDD VDD clkDn sky130_fd_sc_hd__inv_1
+x16 DAC clk2_nd VSS VSS VDD VDD clkDp_b sky130_fd_sc_hd__nand2_1
+x17 clkDp_b VSS VSS VDD VDD clkDp sky130_fd_sc_hd__inv_1
+x18 VDD clk1_nd VSS VSS VDD VDD clk1_b sky130_fd_sc_hd__nand2_1
+x19 clk1_b VSS VSS VDD VDD clk1 sky130_fd_sc_hd__inv_1
+x20 VDD clk2_nd VSS VSS VDD VDD clk2_b sky130_fd_sc_hd__nand2_1
+x21 clk2_b VSS VSS VDD VDD clk2 sky130_fd_sc_hd__inv_1
+x25 VDD clk1e_nd VSS VSS VDD VDD clk1e_b sky130_fd_sc_hd__nand2_1
+x26 clk1e_b VSS VSS VDD VDD clk1e sky130_fd_sc_hd__inv_1
+x27 VDD clk2e_nd VSS VSS VDD VDD clk2e_b sky130_fd_sc_hd__nand2_1
+x34 clk2e_b VSS VSS VDD VDD clk2e sky130_fd_sc_hd__inv_1
+x1 VDD Ibias net12 OUTp OUTn net4 VSS CMFB clkCh2_nd FullyDiffOTA
+* noconn #net13
+* noconn #net14
+.ends
+
+
+* expanding   symbol:  Analog/Bootstrap_Switch.sym # of pins=6
+** sym_path: /work/xschem/lib/Analog/Bootstrap_Switch.sym
+** sch_path: /work/xschem/lib/Analog/Bootstrap_Switch.sch
+.subckt Bootstrap_Switch clk_bar clk VDD VSS n1 n2  Wn=1.0 Wp=1.0 LL=0.15
+*.iopin n2
+*.iopin n1
+*.iopin VDD
+*.iopin VSS
+*.ipin clk_bar
+*.ipin clk
+XM1 n1 G n2 VSS sky130_fd_pr__nfet_01v8 L=LL W=WN nf=1 ad='int((1 + 1)/2) * WN / 1 * 0.29' as='int((1 + 2)/2) * WN / 1 * 0.29' pd='2*int((1 + 1)/2) * (WN / 1 + 0.29)'
++ ps='2*int((1 + 2)/2) * (WN / 1 + 0.29)' nrd='0.29 / WN ' nrs='0.29 / WN ' sa=0 sb=0 sd=0 mult=1
+XM2 CBB G n1 VSS sky130_fd_pr__nfet_01v8 L=LL W=WN nf=1 ad='int((1 + 1)/2) * WN / 1 * 0.29' as='int((1 + 2)/2) * WN / 1 * 0.29' pd='2*int((1 + 1)/2) * (WN / 1 + 0.29)'
++ ps='2*int((1 + 2)/2) * (WN / 1 + 0.29)' nrd='0.29 / WN ' nrs='0.29 / WN ' sa=0 sb=0 sd=0 mult=1
+XC1 CBT CBB sky130_fd_pr__cap_mim_m3_1 W=3 L=3 MF=5 m=5
+XC2 CBT CBB sky130_fd_pr__cap_mim_m3_2 W=3 L=3 MF=5 m=5
+XM3 CBB clk_bar VSS VSS sky130_fd_pr__nfet_01v8 L=LL W=WN nf=1 ad='int((1 + 1)/2) * WN / 1 * 0.29' as='int((1 + 2)/2) * WN / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (WN / 1 + 0.29)' ps='2*int((1 + 2)/2) * (WN / 1 + 0.29)' nrd='0.29 / WN ' nrs='0.29 / WN ' sa=0 sb=0 sd=0 mult=1
+XM6 G VDD X VSS sky130_fd_pr__nfet_01v8 L=LL W=WN nf=1 ad='int((1 + 1)/2) * WN / 1 * 0.29' as='int((1 + 2)/2) * WN / 1 * 0.29' pd='2*int((1 + 1)/2) * (WN / 1 + 0.29)'
++ ps='2*int((1 + 2)/2) * (WN / 1 + 0.29)' nrd='0.29 / WN ' nrs='0.29 / WN ' sa=0 sb=0 sd=0 mult=1
+XM7 VDD G CBT CBT sky130_fd_pr__pfet_01v8 L=LL W=Wp nf=1 ad='int((1 + 1)/2) * Wp / 1 * 0.29' as='int((1 + 2)/2) * Wp / 1 * 0.29' pd='2*int((1 + 1)/2) * (Wp / 1 + 0.29)'
++ ps='2*int((1 + 2)/2) * (Wp / 1 + 0.29)' nrd='0.29 / Wp ' nrs='0.29 / Wp ' sa=0 sb=0 sd=0 mult=1
+XM8 X clk_bar VSS VSS sky130_fd_pr__nfet_01v8 L=LL W=WN nf=1 ad='int((1 + 1)/2) * WN / 1 * 0.29' as='int((1 + 2)/2) * WN / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (WN / 1 + 0.29)' ps='2*int((1 + 2)/2) * (WN / 1 + 0.29)' nrd='0.29 / WN ' nrs='0.29 / WN ' sa=0 sb=0 sd=0 mult=1
+XM4 CBT clk_bar G CBT sky130_fd_pr__pfet_01v8 L=LL W=Wp nf=1 ad='int((1 + 1)/2) * Wp / 1 * 0.29' as='int((1 + 2)/2) * Wp / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (Wp / 1 + 0.29)' ps='2*int((1 + 2)/2) * (Wp / 1 + 0.29)' nrd='0.29 / Wp ' nrs='0.29 / Wp ' sa=0 sb=0 sd=0 mult=1
+.ends
+
+
+* expanding   symbol:  Analog/TG_switch.sym # of pins=6
+** sym_path: /work/xschem/lib/Analog/TG_switch.sym
+** sch_path: /work/xschem/lib/Analog/TG_switch.sch
+.subckt TG_switch clk_bar clk VDD VSS n1 n2  Wn=3.0 Wp=10.0 LL=0.35
+*.iopin n2
+*.iopin n1
+*.iopin VDD
+*.iopin VSS
+*.ipin clk_bar
+*.ipin clk
+XM3 n1 clk n2 VSS sky130_fd_pr__nfet_01v8_lvt L=LL W=Wn nf=1 ad='int((1 + 1)/2) * Wn / 1 * 0.29' as='int((1 + 2)/2) * Wn / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (Wn / 1 + 0.29)' ps='2*int((1 + 2)/2) * (Wn / 1 + 0.29)' nrd='0.29 / Wn ' nrs='0.29 / Wn ' sa=0 sb=0 sd=0 mult=1
+XM4 n1 clk_bar n2 VDD sky130_fd_pr__pfet_01v8_lvt L=LL W=Wp nf=1 ad='int((1 + 1)/2) * Wp / 1 * 0.29' as='int((1 + 2)/2) * Wp / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (Wp / 1 + 0.29)' ps='2*int((1 + 2)/2) * (Wp / 1 + 0.29)' nrd='0.29 / Wp ' nrs='0.29 / Wp ' sa=0 sb=0 sd=0 mult=1
+.ends
+
+
+* expanding   symbol:  Analog/chopper.sym # of pins=8
+** sym_path: /work/xschem/lib/Analog/chopper.sym
+** sch_path: /work/xschem/lib/Analog/chopper.sch
+.subckt chopper clk VDD clk_b VSS OUT1 IN1 OUT2 IN2
+*.iopin IN1
+*.iopin IN2
+*.iopin OUT1
+*.iopin OUT2
+*.iopin clk
+*.iopin clk_b
+*.iopin VDD
+*.iopin VSS
+x1 phiA clk VDD VSS IN1 OUT1 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x2 phiB clk_b VDD VSS IN1 OUT2 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x3 phiB clk_b VDD VSS IN2 OUT1 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x4 phiA clk VDD VSS IN2 OUT2 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x38 clk VSS VSS VDD VDD phiA sky130_fd_sc_hd__inv_1
+x5 clk_b VSS VSS VDD VDD phiB sky130_fd_sc_hd__inv_1
+.ends
+
+
+* expanding   symbol:  Analog/NonOverlappingClk.sym # of pins=6
+** sym_path: /work/xschem/lib/Analog/NonOverlappingClk.sym
+** sch_path: /work/xschem/lib/Analog/NonOverlappingClk.sch
+.subckt NonOverlappingClk VSS VDD clk_nd clk clk_b Seed
+*.iopin Seed
+*.iopin VSS
+*.iopin clk_nd
+*.iopin clk
+*.iopin clk_b
+*.iopin VDD
+x1 net1 clk_b VSS VSS VDD VDD net2 sky130_fd_sc_hd__nor2_1
+x37 Seed clk_nd VSS VSS VDD VDD net1 sky130_fd_sc_hd__nand2_1
+x33 clk clk_nd VSS VSS VDD VDD net5 sky130_fd_sc_hd__nor2_1
+x38 net8 VSS VSS VDD VDD clk sky130_fd_sc_hd__inv_4
+x40 net5 VSS VSS VDD VDD net6 sky130_fd_sc_hd__inv_1
+x2 net9 VSS VSS VDD VDD clk_b sky130_fd_sc_hd__inv_4
+x3 net2 VSS VSS VDD VDD net3 sky130_fd_sc_hd__inv_1
+x4 net3 VSS VSS VDD VDD net4 sky130_fd_sc_hd__inv_1
+x5 net4 VSS VSS VDD VDD net8 sky130_fd_sc_hd__inv_1
+x6 net7 VSS VSS VDD VDD net9 sky130_fd_sc_hd__inv_1
+x7 net6 VSS VSS VDD VDD net7 sky130_fd_sc_hd__inv_1
+.ends
+
+
+* expanding   symbol:  Analog/FullyDiffOTA.sym # of pins=9
+** sym_path: /work/xschem/lib/Analog/FullyDiffOTA.sym
+** sch_path: /work/xschem/lib/Analog/FullyDiffOTA.sch
+.subckt FullyDiffOTA VDD Ibias INn OUTp OUTn INp VSS CMFB clkCh2_nd
+*.iopin CMFB
+*.ipin INp
+*.iopin VDD
+*.ipin INn
+*.iopin VSS
+*.opin OUTp
+*.opin OUTn
+*.iopin Ibias
+*.iopin clkCh2_nd
+XItail net1 Ibias VDD VDD sky130_fd_pr__pfet_01v8 L=0.7 W=2.5 nf=1 ad=0.725 as=0.725 pd=5.58 ps=5.58 nrd=0.116 nrs=0.116 sa=0 sb=0
++ sd=0 mult=9 m=9
+XM1 OUTp1 INp net1 net1 sky130_fd_pr__pfet_01v8_lvt L=1.0 W=7.3 nf=1 ad=2.117 as=2.117 pd=15.18 ps=15.18 nrd=0.0397260273972603
++ nrs=0.0397260273972603 sa=0 sb=0 sd=0 mult=10 m=10
+XM2 OUTn1 INn net1 net1 sky130_fd_pr__pfet_01v8_lvt L=1.0 W=7.3 nf=1 ad=2.117 as=2.117 pd=15.18 ps=15.18 nrd=0.0397260273972603
++ nrs=0.0397260273972603 sa=0 sb=0 sd=0 mult=10 m=10
+XM3 OUTp1 VCM1 VSS VSS sky130_fd_pr__nfet_01v8 L=0.45 W=2.5 nf=1 ad=0.725 as=0.725 pd=5.58 ps=5.58 nrd=0.116 nrs=0.116 sa=0 sb=0
++ sd=0 mult=1
+XM4 OUTn1 VCM1 VSS VSS sky130_fd_pr__nfet_01v8 L=0.45 W=2.5 nf=1 ad=0.725 as=0.725 pd=5.58 ps=5.58 nrd=0.116 nrs=0.116 sa=0 sb=0
++ sd=0 mult=1
+XM5 OUTp ChOUTp1 VSS VSS sky130_fd_pr__nfet_01v8 L=0.45 W=5 nf=1 ad=1.45 as=1.45 pd=10.58 ps=10.58 nrd=0.058 nrs=0.058 sa=0 sb=0
++ sd=0 mult=3 m=3
+XM6 OUTn ChOUTn1 VSS VSS sky130_fd_pr__nfet_01v8 L=0.45 W=5 nf=1 ad=1.45 as=1.45 pd=10.58 ps=10.58 nrd=0.058 nrs=0.058 sa=0 sb=0
++ sd=0 mult=3 m=3
+XM7 OUTp CMFB VDD VDD sky130_fd_pr__pfet_01v8 L=0.45 W=2.5 nf=1 ad=0.725 as=0.725 pd=5.58 ps=5.58 nrd=0.116 nrs=0.116 sa=0 sb=0
++ sd=0 mult=9 m=9
+XM8 OUTn CMFB VDD VDD sky130_fd_pr__pfet_01v8 L=0.45 W=2.5 nf=1 ad=0.725 as=0.725 pd=5.58 ps=5.58 nrd=0.116 nrs=0.116 sa=0 sb=0
++ sd=0 mult=9 m=9
+XM9 Ibias Ibias VDD VDD sky130_fd_pr__pfet_01v8 L=0.7 W=2.5 nf=1 ad=0.725 as=0.725 pd=5.58 ps=5.58 nrd=0.116 nrs=0.116 sa=0 sb=0
++ sd=0 mult=9 m=9
+XR9 OUTp1 VCM1 VSS sky130_fd_pr__res_xhigh_po_0p35 L=53 mult=1
+XR5 VCM1 OUTn1 VSS sky130_fd_pr__res_xhigh_po_0p35 L=53 mult=1
+XC5 VCM1 OUTp1 sky130_fd_pr__cap_mim_m3_1 W=2 L=3 MF=1
+XC6 OUTp1 VCM1 sky130_fd_pr__cap_mim_m3_2 W=2 L=3 MF=1
+XC3 OUTn1 VCM1 sky130_fd_pr__cap_mim_m3_1 W=2 L=3 MF=1
+XC4 VCM1 OUTn1 sky130_fd_pr__cap_mim_m3_2 W=2 L=3 MF=1
+XR1 net2 ChOUTp1 VSS sky130_fd_pr__res_high_po W=1 L=2 mult=1
+XR2 ChOUTn1 net3 VSS sky130_fd_pr__res_high_po W=1 L=2 mult=1
+XC7 net3 OUTn sky130_fd_pr__cap_mim_m3_1 W=12 L=12 MF=2 m=2
+XC8 net3 OUTn sky130_fd_pr__cap_mim_m3_2 W=12 L=12 MF=2 m=2
+XC1 OUTp net2 sky130_fd_pr__cap_mim_m3_1 W=12 L=12 MF=2 m=2
+XC2 OUTp net2 sky130_fd_pr__cap_mim_m3_2 W=12 L=12 MF=2 m=2
+x36 clkCh2 VDD clkCh2_b VSS ChOUTn1 OUTn1 ChOUTp1 OUTp1 chopper
+x33 VSS VDD clkCh2_nd clkCh2 clkCh2_b VDD NonOverlappingClk
+.ends
+.end

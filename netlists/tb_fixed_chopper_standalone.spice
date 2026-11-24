@@ -1,0 +1,108 @@
+** Chopper standalone test: (1) switching spike / charge injection with zero input, (2) modulation of a differential sine to f_ch +- f_in.
+** Fixed chopper: 4-phase chopper driven by the non-overlapping clock generator (NonOverlappingClk), as in the top level.
+** Load: source resistance 1k (the SC network driving the chopper) and 0.5 pF at each output (OTA input).
+** Results: chopper_spike.txt and chopper_mod.txt (copy to results/chopper_noc/), analyzed by matlab/analyze_chopper.m
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice"
+.include "/foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice"
+.include /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.temp 25
+.param amp=0.3
+.param fin=20k
+
+V2 VDD 0 1.8
+V3 VSS 0 0
+Vclk_ch_nd clkCh_nd 0 dc 0 PULSE 0 1.8 120n 0.1n 0.1n 488.18n 976.56n
+xnoc VSS VDD clkCh_nd clkCh clkCh_b VDD NonOverlappingClk
+
+Vin1 s1 0 SIN(0.9 {amp} {fin} 0 0 0)
+Vin2 s2 0 SIN(0.9 {amp} {fin} 0 0 180)
+Rs1 s1 IN1 1k
+Rs2 s2 IN2 1k
+x2 clkCh VDD clkCh_b VSS OUT1 IN1 OUT2 IN2 chopper
+CL1 OUT1 0 0.5p
+CL2 OUT2 0 0.5p
+
+.control
+  set wr_singlescale
+  option numdgt=7
+  * (1) zero input: only the switching spike is visible at the output.
+  *     The ideal symmetric circuit cancels the injected charge in the differential output, so the load of one side is made
+  *     5 % larger (mismatch) to see the residual; the single-ended OUT1 spike (common mode) is written as well.
+  alterparam amp=0
+  reset
+  alter CL2 = 0.525p
+  tran 0.1n 12u
+  let vout = v(OUT1)-v(OUT2)
+  wrdata /foss/designs/chopper_spike.txt vout v(OUT1) v(OUT2) v(clkCh) v(clkCh_b)
+  * (2) differential sine, 0.3 V amplitude per side (0.6 V diff peak = -6 dBFS), f_in = 20 kHz
+  alterparam amp=0.3
+  reset
+  alter CL2 = 0.5p
+  tran 1n 200u
+  let vout = v(OUT1)-v(OUT2)
+  let vin  = v(IN1)-v(IN2)
+  wrdata /foss/designs/chopper_mod.txt vout vin
+.endc
+
+.subckt chopper clk VDD clk_b VSS OUT1 IN1 OUT2 IN2
+*.iopin IN1
+*.iopin IN2
+*.iopin OUT1
+*.iopin OUT2
+*.iopin clk
+*.iopin clk_b
+*.iopin VDD
+*.iopin VSS
+x1 phiA clk VDD VSS IN1 OUT1 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x2 phiB clk_b VDD VSS IN1 OUT2 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x3 phiB clk_b VDD VSS IN2 OUT1 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x4 phiA clk VDD VSS IN2 OUT2 TG_switch Wn=4.0 Wp=14.0 LL=0.35
+x38 clk VSS VSS VDD VDD phiA sky130_fd_sc_hd__inv_1
+x5 clk_b VSS VSS VDD VDD phiB sky130_fd_sc_hd__inv_1
+.ends
+
+
+* expanding   symbol:  Analog/NonOverlappingClk.sym # of pins=6
+** sym_path: /foss/designs/xschem/lib/Analog/NonOverlappingClk.sym
+** sch_path: /foss/designs/xschem/lib/Analog/NonOverlappingClk.sch
+.subckt NonOverlappingClk VSS VDD clk_nd clk clk_b Seed
+*.iopin Seed
+*.iopin VSS
+*.iopin clk_nd
+*.iopin clk
+*.iopin clk_b
+*.iopin VDD
+x1 net1 clk_b VSS VSS VDD VDD net2 sky130_fd_sc_hd__nor2_1
+x37 Seed clk_nd VSS VSS VDD VDD net1 sky130_fd_sc_hd__nand2_1
+x33 clk clk_nd VSS VSS VDD VDD net5 sky130_fd_sc_hd__nor2_1
+x38 net8 VSS VSS VDD VDD clk sky130_fd_sc_hd__inv_4
+x40 net5 VSS VSS VDD VDD net6 sky130_fd_sc_hd__inv_1
+x2 net9 VSS VSS VDD VDD clk_b sky130_fd_sc_hd__inv_4
+x3 net2 VSS VSS VDD VDD net3 sky130_fd_sc_hd__inv_1
+x4 net3 VSS VSS VDD VDD net4 sky130_fd_sc_hd__inv_1
+x5 net4 VSS VSS VDD VDD net8 sky130_fd_sc_hd__inv_1
+x6 net7 VSS VSS VDD VDD net9 sky130_fd_sc_hd__inv_1
+x7 net6 VSS VSS VDD VDD net7 sky130_fd_sc_hd__inv_1
+.ends
+
+
+* expanding   symbol:  Analog/TG_switch.sym # of pins=6
+** sym_path: /foss/designs/xschem/lib/Analog/TG_switch.sym
+** sch_path: /foss/designs/xschem/lib/Analog/TG_switch.sch
+.subckt TG_switch clk_bar clk VDD VSS n1 n2  Wn=3.0 Wp=10.0 LL=0.35
+*.iopin n2
+*.iopin n1
+*.iopin VDD
+*.iopin VSS
+*.ipin clk_bar
+*.ipin clk
+XM3 n1 clk n2 VSS sky130_fd_pr__nfet_01v8_lvt L=LL W=Wn nf=1 ad='int((1 + 1)/2) * Wn / 1 * 0.29' as='int((1 + 2)/2) * Wn / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (Wn / 1 + 0.29)' ps='2*int((1 + 2)/2) * (Wn / 1 + 0.29)' nrd='0.29 / Wn ' nrs='0.29 / Wn ' sa=0 sb=0 sd=0 mult=1
+XM4 n1 clk_bar n2 VDD sky130_fd_pr__pfet_01v8_lvt L=LL W=Wp nf=1 ad='int((1 + 1)/2) * Wp / 1 * 0.29' as='int((1 + 2)/2) * Wp / 1 * 0.29'
++ pd='2*int((1 + 1)/2) * (Wp / 1 + 0.29)' ps='2*int((1 + 2)/2) * (Wp / 1 + 0.29)' nrd='0.29 / Wp ' nrs='0.29 / Wp ' sa=0 sb=0 sd=0 mult=1
+.ends
+.end

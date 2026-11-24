@@ -31,11 +31,8 @@ switch which_set
                  'in_w2',     'input chopper TG 2/7 (1/2 width)';
                  'in_w1',     'input chopper TG 1/3.5 (1/4 width)'};
     case 'noc'
-        din = fullfile(root, '..', 'results', 'chopper_noc');  pre = 'chop_';  ext = '';
-        cases = {'off',  'chopper static (reference)';
-                 'base', 'NOC + 4-phase chopper, fs/2';
-                 'fs4',  'NOC + 4-phase chopper, fs/4';
-                 'fs8',  'NOC + 4-phase chopper, fs/8'};
+        din = fullfile(root, '..', 'results', 'drift');  pre = 'new_on_';  ext = '';
+        cases = {'neg',  'chopper static (reference)'};
 end
 
 % ---- read all cases first (the off case is the reference for dev / alpha)

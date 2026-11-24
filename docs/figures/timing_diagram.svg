@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="780" height="830" viewBox="0 0 780 830">
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#222222"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666666"/></marker></defs><rect x="1" y="1" width="778" height="828" rx="10" fill="#FFFFFF" stroke="#E2E2E2" stroke-width="1.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1188" height="830" viewBox="0 0 1188 830">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#222222"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.2" markerHeight="7.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#666666"/></marker></defs><rect x="1" y="1" width="1186" height="828" rx="12" fill="#FFFFFF" stroke="#E2E2E2" stroke-width="1.5"/>
+<g transform="translate(163 0)">
 <line x1="191.08544277873352" y1="40" x2="456.0854427787335" y2="40" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
 <line x1="456.0854427787335" y1="40" x2="191.08544277873352" y2="40" stroke="#222222" stroke-width="1.8" marker-end="url(#arr)"/>
 <text x="323.5854427787335" y="30" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="middle" font-weight="normal">T = 488.28 ns (fs = 2.048 MHz)</text>
@@ -87,5 +88,6 @@
 <text x="510" y="680" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#160;&#160;&#160;DAC acts during &#966;2</text>
 <text x="510" y="702" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="13" fill="#222222" text-anchor="start" font-weight="normal">&#8226; chopper toggles at mid-&#966;1</text>
 <text x="40" y="786" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="start" font-weight="normal">Waveforms follow the netlist PULSE sources. DAC bit pattern (1, 0) is an example.</text>
+</g>
 </g>
 </svg>
