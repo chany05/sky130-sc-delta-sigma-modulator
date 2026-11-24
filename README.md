@@ -16,8 +16,7 @@ A transistor-level (SKY130, Xschem / ngspice) 2nd-order 1-bit fully differential
 ## Highlights
 
 - The specifications (GBW, DC gain, slew rate, $C_s$, switch $R_{on}$) are derived step by step from the sensor noise and the 16-bit target (see Specifications and Circuit-level Requirements).
-- SNDR: 102.1 dB (16.7 bit) with injected kT/C and flicker noise, on 8 ms records with a 375 Hz input (mean of 4 runs, 99.4 – 105.8 dB). Without injected noise the circuit reaches 113.5 dB, the same as the ideal model on the same record (114.6 dB). The first design reached only 68–70 dB because the chopper added an error at every polarity reversal; its two causes (chopper clock overlap, and the output chopper flipping the OTA output node) are fixed (see Integrator).
-- With kT/C and flicker noise and an ideal chopper, the noise budget estimates $\approx$ 96 dB (15.7 bit): above the requirement (95.2 dB) and below the design target (98.1 dB).
+- SNDR: the fixed circuit meets the design target with injected noise (table below) and matches the ideal model without it. The first design reached only 68–70 dB because the chopper added an error at every polarity reversal; its two causes (chopper clock overlap, and the output chopper flipping the OTA output node) are fixed (see Integrator).
 - Integrator tests: the 2nd integrator is within 0.7 % of the ideal coefficients. After the chopper fixes the 1st integrator has a DAC step of −0.10 % and an input step of −0.62 %, with no odd / even alternation (see Integrator).
 - Switches: the bootstrap switch has a monotonic $R_{on}$ (at most 1.41 kΩ, below the 2.43 kΩ limit). The TG reaches 0.9 kΩ, above the 0.5 kΩ target of the summing-node switch, so its width has to be increased.
 
@@ -27,7 +26,7 @@ A transistor-level (SKY130, Xschem / ngspice) 2nd-order 1-bit fully differential
 |---|---|---|
 | SNDR | 102.1 dB | 8 ms records, 375 Hz input, mean of 4 runs with injected noise (99.4 – 105.8 dB). 113.5 dB without injected noise |
 | ENOB | 16.7 bit | From the SNDR with injected noise |
-| Noise budget estimate | $\approx$ 96 dB (15.7 bit) | Quantization + kT/C + chopped OTA noise, ideal chopper |
+| Noise budget estimate | $\approx$ 96 dB (15.7 bit) | Quantization + kT/C + chopped OTA noise, ideal chopper. It keeps the OTA noise density at $f_{ch}$ in band; the simulation is 6 dB above it (see Comparison with the noise budget) |
 | Requirement / design target | ≥ 95.2 dB / 98.1 dB | 15.5 bit / 16 bit |
 | Power | 684 µW | Static bias only. Comparator, clock and references are ideal |
 
@@ -131,7 +130,7 @@ IBQN=\frac{\pi^{2L}\,\Delta^2}{12\,(2L+1)\,OSR^{2L+1}}
 - $x_1$ and $x_2$ are the outputs of the 1st and 2nd integrators. The standard MOD2 is scaled by $s_1$ and $s_2$ (the factors applied to $x_1$ and $x_2$), which gives the coefficients $a_1 = s_1$, $c_2 = s_2 / s_1$ and $a_2 = 2 s_2$.
 
 **Dynamic range scaling**
-- Dynamic range scaling (for the maximum allowed input of −3 dBFS): the standard MOD2 reaches $\max\lvert x_1\rvert \approx 3.17$ and $\max\lvert x_2\rvert \approx 6.27$. With $s_1 = 0.3$ and $s_2 = 0.18$ they drop to 0.95 / 1.13 while the bitstream stays identical (limits 1.0 / 1.2: 1.0 is the full scale, and 1.2 for $x_2$ is an assumed bound that needs an OTA 2 output swing wider than the reference range).
+- For the maximum allowed input of −3 dBFS, the standard MOD2 reaches $\max\lvert x_1\rvert \approx 3.17$ and $\max\lvert x_2\rvert \approx 6.27$. With $s_1 = 0.3$ and $s_2 = 0.18$ they drop to 0.95 / 1.13 while the bitstream stays identical (limits 1.0 / 1.2: 1.0 is the full scale, and 1.2 for $x_2$ is an assumed bound that needs an OTA 2 output swing wider than the reference range).
 - For the normal −6 dBFS input the swing is smaller, $\max\lvert x_1\rvert \approx 0.82$ and $\max\lvert x_2\rvert \approx 0.76$ (there is margin because the coefficients were chosen for the worst-case input).
 
 ![Integrator output histograms](docs/figures/scaling_histograms.svg)
@@ -181,7 +180,7 @@ The SC CMFB circuit is part of the SC Integrator schematic shown below.
 - **OTA 2nd stage (output)**: SC CMFB (no static power and no loss of output swing, and the clock is already available; output CM target 0.9 V).
 - **OTA 1st stage**: resistive CMFB. The resistor is about 300 kΩ (302.9 kΩ, res_xhigh_po), reduced from 5 MΩ to save area while the DC gain still meets the spec, and the capacitors (13.9 fF × 2) were sized roughly.
 - **SC CMFB capacitors (OTA output stage)**: about 517 fF on the output nodes and about 139 fF on the VCM / Vbias side.
-- **Output CM**: the SC CMFB reference is trimmed with $V_{bias}$. The final values are $V_{bias}$ = 0.62 V (1st integrator, output CM 0.9017 V) and $V_{bias}$ = 0.69 V (2nd integrator).
+- **Output CM**: the SC CMFB reference is trimmed with $V_{bias}$. The final values are $V_{bias}$ = 0.62 V (1st integrator, output CM 0.8987 V in the fixed circuit) and $V_{bias}$ = 0.69 V (2nd integrator).
 
 #### SC Integrator
 ![1st SC integrator](docs/figures/SC_Integrator.svg)
@@ -218,7 +217,7 @@ The measured $R_{on}$ curves are in Verification, section 2 (Switches).
 | Fixed nodes (VCM, $\phi_{1e}$ / $\phi_2$) | TG, LVT (Wn 3 / Wp 10 / L 0.35) | The node voltage is fixed, so linearity is not needed and only the worst-case $R_{on}$ (at 0.9 V) has to be met |
 | Signal path, summing-node side of the OTA ($\phi_{2e}$) | TG, LVT (Wn 4 / Wp 14 / L 0.35) | Fixed virtual-ground node, inside the OTA loop → low $R_{on}$ needed |
 | DAC references (VREFp / VREFn) | Basic switches: PMOS (1 × 2 / 0.15) → VREFp, NMOS (1 × 1 / 0.15) → VREFn | The references are close to VDD / VSS, so a single PMOS / NMOS is enough, with minimum area |
-| Chopper | TG, LVT (Wn 4 / Wp 14 / L 0.35) × 4 | The chopper is outside the charge-transfer path, so the $R_{on}$ requirement is relaxed (see Chopper in Architecture) |
+| Chopper | TG, LVT (Wn 4 / Wp 14 / L 0.35) × 4 | The chopper is outside the charge-transfer path, so the $R_{on}$ requirement is relaxed |
 
 - The TG for the fixed nodes (3 / 10 / 0.35 µm) was not simulated separately.
 
@@ -260,7 +259,7 @@ The measured $R_{on}$ curves are in Verification, section 2 (Switches).
 | 2nd | $c_2 = s_2/s_1 = 0.6$, $a_2 = 2 s_2 = 0.36$ | $C_{s2} : C_{d2} : C_{i2}$ = 20 : 12 : 33 ($\approx$ 15 : 9 : 25) | 4.23 / 2.54 / 6.98 pF (unit 0.21 pF) |
 
 - Each ratio is realized with an integer number of identical MIM unit cells.
-- The 2nd-stage capacitors are not set by noise: the noise of the 2nd stage is attenuated by the gain of the 1st integrator, so they can be smaller (a next step, see Limitations).
+- The 2nd-stage capacitors are not set by noise: the noise of the 2nd stage is attenuated by the gain of the 1st integrator, so they can be smaller (see the power item in Next steps).
 - The capacitor ratios give the coefficients of the circuit: 1st stage $C_s / C_i = C_d / C_i$ = 6 / 20 = 0.3 (exactly $s_1$); 2nd stage $c_2 = C_{s2}/C_{i2}$ = 20 / 33 = 0.606 and $a_2 = C_{d2}/C_{i2}$ = 12 / 33 = 0.364 instead of 0.6 and 0.36. Both are 1.01 % larger, which is the same as $s_2$ = 0.1818, so the NTF (zeros at DC) and the SQNR do not change (115.6 dB in both cases) and only the swing of $x_2$ grows by 1 % ($\max\lvert x_2\rvert$ = 1.14 at −3 dBFS, limit 1.2).
 
 ### DC gain
@@ -364,7 +363,7 @@ n_\tau=\omega_u T_{settle}=2\pi\beta\,GBW\,T_{settle}\;\Rightarrow\;GBW\ge\frac{
 
 - $A_{in}$ = 0.3 V (normal −6 dBFS input, single-ended peak), $V_{ref}$ = 0.6 V ($V_{REFp} - V_{CM}$)
 
-**2) Time allocation** — the phase time $T_{int}$ = 244 ns is split into 25 % for slewing ($T_{slew}$ = 61 ns) and 75 % for linear settling (183 ns, as in the GBW derivation); the split is a design choice.
+**2) Time allocation** — 25 % of the phase time is used for slewing ($T_{slew}$ = 61 ns), as in the GBW derivation.
 
 **3) Required slew rate**
 
@@ -453,7 +452,6 @@ R_{on}\le\frac{t}{N_{err}\,(C_s+C_d)}
 ### Chopper
 - **Why it was added**: without the chopper the flicker noise of the OTA dominates the in-band noise: 1.9e-8 V² (SNR 69.8 dB), against 1.53e-11 V² for kT/C (100.7 dB). The OTA flicker alone would limit the SNDR to about 70 dB (see Noise analysis in Verification).
 - Input-referred flicker noise of the 1st OTA (`.noise`, $I_{tail}$ = 30.8 µA, no chopper): 17.9 µV/√Hz at 1 Hz and 0.98 µV/√Hz at 1 kHz, following $f^{-0.84}$; 4.7e-9 V² in the 1 Hz – 2 kHz band (before the capacitor ratio).
-- Chopper switches: the same TG as the summing-node switch (Wn 4 / Wp 14 / L 0.35 µm). The chopper is outside the charge-transfer path, so its $R_{on}$ requirement is relaxed.
 
 ### Derived spec summary
 | Item | Required (modeling) | Design |
@@ -478,7 +476,7 @@ R_{on}\le\frac{t}{N_{err}\,(C_s+C_d)}
 ## Verification
 
 All results are from ngspice simulations (AC for the OTA, transient otherwise) with $C_s$ = 4.2 pF unless noted.
-Sections based on the circuit before the chopper fixes (the 2nd chopper at the OTA output, the Miller capacitor around both stages): the OTA verification (1) and the modulator spectrum and SNDR of the first design (6). Their netlists and figures have not been regenerated. The chopper tests (3) and the 1st-integrator tests (4) use the fixed circuit.
+Sections based on the circuit before the chopper fixes (the 2nd chopper at the OTA output, the Miller capacitor around both stages): the OTA verification (1) and the first-design part at the end of the modulator section (6). Their netlists and figures have not been regenerated. The chopper tests (3), the 1st-integrator tests (4) and the final modulator runs (6) use the fixed circuit.
 
 ### 1. OTA (standalone)
 Closed-loop AC simulation of the OTA with the loop closed at DC only (inductors), 25 °C, tt (`tb_FD_OTA` for OTA 1, the same testbench with OTA 2). The loop gain is $T = A\beta$, and the crossover and the phase margin are read at $|T|$ = 0 dB. The feedback factor is $\beta_1$ = 0.6 for OTA 1 (measured with the capacitor network of the testbench) and $\beta_2 = C_{i2} / (C_{s2} + C_{d2} + C_{i2})$ = 33 / 65 = 0.508 for OTA 2 (independent of the unit capacitor); the OTA 2 testbench still uses $\beta$ = 0.6, so its loop gain is scaled by 0.508 / 0.6 (the phase is the same).
@@ -494,7 +492,7 @@ Closed-loop AC simulation of the OTA with the loop closed at DC only (inductors)
 
 ¹ Required $\beta\cdot GBW$ with GBW = 17.6 MHz: 10.6 MHz for OTA 1 ($\beta_1$ = 0.6) and 8.9 MHz for OTA 2 ($\beta_2$ = 0.508). Equivalent GBW = crossover / $\beta$: 24.3 MHz (OTA 1) and 26.1 MHz (OTA 2).
 
-- Both OTAs meet the DC gain and the crossover. The phase margin of OTA 1 (65.0°) is at the target, and that of OTA 2 (62.5°) is 3.0° below the 65.5° target but above 60°. The integrator tests show that the output settles below 1 LSB before the sampling point (see Integrator).
+- Both OTAs meet the DC gain and the crossover. The phase margin of OTA 1 (65.0°) is at the target, and that of OTA 2 (62.5°) is 3.0° below the 65.5° target but above 60°. In the fixed circuit the choppers lower the PM of OTA 1 to 61.8° (see Chopper). The integrator tests show that the output settles below 1 LSB before the sampling point (see Integrator).
 - All devices of OTA 1 are in saturation (operating-point table in Circuit-level Requirements). The noise of the OTA is analyzed in Noise analysis.
 - Not verified: the slew rate (≥ 4.42 V/µs) is not simulated separately, and the OTA was simulated at 25 °C and the tt corner only.
 
@@ -516,7 +514,7 @@ $R_{on}$ is extracted from a slow input ramp with a 10 mV sense source ($R_{on} 
 | 85 °C | 398 – 844 | 332 – 812 | 249 – 490 |
 | 125 °C | 424 – 873 | 352 – 830 | 266 – 520 |
 
-- The worst case of the TG over all corners and temperatures is about 0.9 kΩ (ss, −40 °C). This is far below the 2.43 kΩ limit of the sampling switch, but above the 0.5 kΩ target of the summing-node switch (see Architecture), so the TG width has to be increased. The $R_{on}$ has a bell shape over $V_{in}$ with the peak at mid-range (about 0.9 V at tt).
+- The worst case of the TG over all corners and temperatures is about 0.9 kΩ (ss, −40 °C). This is far below the 2.43 kΩ limit of the sampling switch, but above the 0.5 kΩ target of the summing-node switch, so the TG width has to be increased (see Next steps). The $R_{on}$ has a bell shape over $V_{in}$ with the peak at mid-range (about 0.9 V at tt).
 
 **Bootstrap switch over corners** ($R_{on}$ over $V_{in}$ = 0.1 – 1.7 V, in Ω; `analyze_bs_corners.m`):
 
@@ -612,8 +610,6 @@ The figure and the table above are from the fixed circuit. This section describe
 ![Integrator 2 tests](docs/figures/integ2_tests.svg)
 *2nd integrator, same layout as above. The step per cycle matches the ideal value after the first cycle. The DAC step settles below 1 LSB at about 360 ns and the DC-input step at about 310 ns of the 488 ns cycle, well before the sampling point at 485 ns. The spike at the sampling point is the switching transient of the clock edge.*
 
-- The spikes are the switching transients at the clock edges; they settle before the end of $\phi_2$, where the output is sampled.
-
 | Metric | Ideal | Result |
 |---|---|---|
 | DAC step (2nd integrator) | 0.436 V | 0.4355 V (−0.19 %) |
@@ -667,7 +663,7 @@ The transient simulation does not include device noise, so the noise is analyzed
   - kT/C source `trnoise(63.7u 488.28n 0 0)`: the white PSD of one source is $`2\,NA^2\,NT`$ = 3.96e-15 V²/Hz. Measured: 3.98e-15 V²/Hz at 10–100 kHz (1.00×) and 3.81e-15 V²/Hz at 1–10 kHz (0.96×). The two sources together give 1.6e-11 V² in the 2 kHz band (the 100–1000 Hz bin gives 0.80× only because there are few Welch bins at low frequency). The 63.7 µV is the value for $C_s$ = 4 pF; for the implemented 4.2 pF the table value is 1.53e-11 V², so the injected kT/C noise is about 3.5 % larger, which is slightly conservative.
   - Flicker source `trnoise(0 1u 0.85 66.4u)`: no white part (NA = 0), NT = 1 µs, exponent NALPHA = 0.85, amplitude NAMP = 66.4 µ; measured slope $f^{-0.81}$ and 9.7e-13 V²/Hz at 1 kHz (2.9e-12 at 100–300 Hz, 6.3e-13 at 1–3 kHz, 9.4e-14 at 10–30 kHz).
     - NAMP is scaled from a standalone run with NAMP = 1 µ so that the PSD matches the `.noise` result of the 1st OTA. For the current OTA the injected PSD equals the OTA at 1 kHz (9.67e-13 V²/Hz) and is within 30 % at 100–300 Hz.
-- Comparison runs: (A) no noise, (B) noise without chopper, (C) noise with chopper. For the fixed circuit, A and C are run on 8 ms records (1 run without noise, which is deterministic, and 4 runs with noise; the final result), and on 13 ms records as an example (see SNDR). B is not simulated because of the run time. For the first design, C was done for 32 ms and A only for 2.4 ms.
+- Comparison runs: (A) no noise, (B) noise without chopper, (C) noise with chopper. For the fixed circuit, A and C are run on 8 ms records (1 run without noise, which is deterministic, and 4 runs with noise; the final result), and on 13 ms records as an example (see 2nd-order modulator). B is not simulated because of the run time. For the first design, C was done for 32 ms and A only for 2.4 ms.
 - The flicker noise of the 2nd OTA is not injected. Referred to the modulator input it is attenuated by the gain of the 1st integrator ($\approx$ 98 at 1 kHz), and the estimate is 1e-12 – 3e-12 V² in band (a few % of the noise budget, about 0.1 – 0.3 dB).
 
 ### 6. 2nd-order modulator: spectrum and SNDR
@@ -754,10 +750,11 @@ The transient simulation does not include device noise, so the noise is analyzed
 - **The SNDR comes from 8 ms records.** The 2 kHz band holds 16 bins of 125 Hz, nothing below 125 Hz is seen, and single runs differ by up to 6 dB. The value is the mean of 4 runs.
 - **The SNDR could not be measured over a full record.** The transistor-level modulator (2 OTAs, choppers, SC CMFB) took about 16 h for 32 ms (65536 cycles) with loose solver tolerances, and tighter tolerances make the run about 10 times slower (about 0.2 ms per hour).
 - The noise budget gives $\approx$ 96 dB (ENOB 15.7): about 0.9 dB above the requirement (95.2 dB) and about 2 dB below the design target (98.1 dB). The OTA 1 noise remaining after the chopper is the largest term (2.6e-11 of 4.2e-11 V²). The estimate assumes an ideal chopper and ignores the folding of the OTA thermal noise by the sampling, so it is probably optimistic.
-- The chopper improvement of the flicker noise (28.6 dB) is an analytic estimate for an ideal chopper. The run with noise and without the chopper (B) was not completed.
+- The chopper improvement of the flicker noise (28.6 dB) is an analytic estimate for an ideal chopper. The run with noise and without the chopper (B) was not simulated.
 
 **Next steps**
 - **Repeat the OTA verification with the fixed circuit** (both OTAs, corners). With the choppers the PM of OTA 1 is 61.8°, below the 65.5° target, so the compensation may need a retune.
+- **Widen the summing-node TG** (Wn 4 / Wp 14 / L 0.35 µm). Its $R_{on}$ reaches 0.9 kΩ over corners and temperature, above the 0.5 kΩ target. This switch is inside the OTA loop during integration, so its pole has to stay well above the loop crossover. About twice the width is needed ($R_{on} \propto 1/W$), and the loop gain and the integrator tests have to be repeated with the new size.
 - Reduce the noise of the 1st OTA (more $g_m$ of the input pair, a smaller $g_{m3}/g_{m1}$, a larger area of M3 / M4). The flicker corner of the OTA is a few MHz, above $f_{ch}$ = 1.024 MHz, so the noise that remains at $f_{ch}$ (3.2e-15 V²/Hz) is still mostly flicker, and it is the largest term of the budget after the chopper.
 - Reduce the OTA power (684 µW in total): the kT/C-driven $C_s$ = 4 pF makes the load large, so the specs of the later stage (2nd integrator and its OTA) should be relaxed.
 - Consider Indirect Miller compensation [8] to reduce the current: connecting the Miller capacitor to an internal node (for example the cascode node) instead of the output reduces the $g_{m2}$ (and therefore $I_{out}$) needed for the same GBW / PM.
@@ -774,7 +771,7 @@ The transient simulation does not include device noise, so the noise is analyzed
 │   ├── lib/Analog/                                                    symbols and schematics (OTA 1 / 2, integrators, switches, chopper)
 │   ├── top/                                                           top-level schematics (2nd-order modulator)
 │   └── testbenches/                                                   Xschem testbenches / netlists (OTA, OTA noise, modulator with trnoise)
-├── netlists/                                                          ngspice testbenches (integrators, integrator chopper timing, TG / bootstrap switches, chopper, chopper flicker, trnoise check, run_corners.sh)
+├── netlists/                                                          ngspice testbenches (integrators, integrator chopper timing, TG / bootstrap switches, chopper, chopper flicker, trnoise check, run_corners.sh); tb_fixed_*: chopper, OTA loop gain and 1st-integrator tests of the fixed circuit
 ├── matlab/
 │   ├── behav_model.m                                                  behavioral model and spec derivation
 │   ├── spec_figures.m                                                 spec graphs (scaling, settling, gain vs. SQNR)
